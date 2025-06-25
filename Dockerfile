@@ -28,8 +28,9 @@ RUN pip install --user -r requirements.txt
 # Copy application code
 COPY --chown=mlopt:mlopt . .
 
-# Create necessary directories
-RUN mkdir -p logs results plots studies
+# Fix permissions and create directories
+RUN chown -R mlopt:mlopt /home/mlopt/app && \
+    mkdir -p logs results plots studies
 
 # Expose ports
 EXPOSE 8080 8888

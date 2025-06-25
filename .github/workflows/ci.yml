@@ -251,7 +251,11 @@ jobs:
   security:
     runs-on: ubuntu-latest
     name: Security Scan
-    
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -265,7 +269,7 @@ jobs:
         output: 'trivy-results.sarif'
     
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
@@ -275,37 +279,52 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install sphinx sphinx-rtd-theme myst-parser
         pip install -r requirements.txt
-    
+
     - name: Build documentation
       run: |
         # Create docs if they don't exist
         if [ ! -d "docs_build" ]; then
           mkdir docs_build
+          cp -r docs/* docs_build/ 2>/dev/null || true
           echo "# ML Optimization Framework Documentation" > docs_build/index.md
-          echo "Documentation will be built here." >> docs_build/index.md
+          echo "" >> docs_build/index.md
+          echo "## Available Documentation" >> docs_build/index.md
+          echo "- [Tutorial](tutorial.md)" >> docs_build/index.md
+          echo "- [API Reference](api_reference.md)" >> docs_build/index.md
+          echo "- [Dashboard Guide](dashboard_guide.md)" >> docs_build/index.md
+          echo "- [Optimization Report](optimization_report.md)" >> docs_build/index.md
         fi
-    
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs_build
+        path: './docs_build'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
 
   # Release
   release:
