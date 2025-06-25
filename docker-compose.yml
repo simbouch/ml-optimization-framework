@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Main optimization service
+  ml-optimizer:
+    build:
+      context: .
+      target: production
+    container_name: ml-optimization-framework
+    volumes:
+      - ./results:/home/mlopt/app/results
+      - ./studies:/home/mlopt/app/studies
+      - ./logs:/home/mlopt/app/logs
+    environment:
+      - PYTHONPATH=/home/mlopt/app
+      - ENVIRONMENT=production
+    networks:
+      - ml-network
+    restart: unless-stopped
+
+  # Optuna Dashboard service
+  optuna-dashboard:
+    build:
+      context: .
+      target: base
+    container_name: optuna-dashboard
+    command: ["optuna-dashboard", "sqlite:///studies/optuna_study.db", "--host", "0.0.0.0", "--port", "8080"]
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./studies:/home/mlopt/app/studies
+    depends_on:
+      - ml-optimizer
+    networks:
+      - ml-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/studies || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Jupyter notebook service (development only)
+  jupyter:
+    build:
+      context: .
+      target: development
+    container_name: ml-jupyter
+    command: ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/home/mlopt/app
+    environment:
+      - PYTHONPATH=/home/mlopt/app
+    networks:
+      - ml-network
+    profiles:
+      - development
+
+networks:
+  ml-network:
+    driver: bridge
+
+# Optional services (use with profiles)
+# To enable: docker-compose --profile <profile-name> up
+
+# PostgreSQL for production database
+# Usage: docker-compose --profile database up
+---
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13-alpine
+    container_name: ml-postgres
+    environment:
+      POSTGRES_DB: optuna
+      POSTGRES_USER: optuna
+      POSTGRES_PASSWORD: optuna_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ml-network
+    profiles:
+      - database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U optuna"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for distributed optimization
+  # Usage: docker-compose --profile distributed up
+  redis:
+    image: redis:7-alpine
+    container_name: ml-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ml-network
+    profiles:
+      - distributed
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_data:
