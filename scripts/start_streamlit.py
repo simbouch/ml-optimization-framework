@@ -42,12 +42,20 @@ def main():
             sys.executable, "-m", "streamlit", "run", "streamlit_app.py",
             "--server.address", "0.0.0.0",
             "--server.port", "8501",
-            "--browser.gatherUsageStats", "false"
+            "--browser.gatherUsageStats", "false",
+            "--theme.base", "light"
         ]
-        
+
         print("🚀 Starting Streamlit...")
+        print("🌐 Access the dashboard at: http://localhost:8501")
+        print("📊 From there you can:")
+        print("  - Launch Optuna dashboard")
+        print("  - View live analytics")
+        print("  - Run optimization demos")
+        print("  - Monitor progress")
+        print()
         subprocess.run(cmd)
-        
+
     except KeyboardInterrupt:
         print("\n⏹️  Streamlit dashboard stopped by user")
     except FileNotFoundError:

@@ -61,23 +61,27 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2️⃣ **Launch Everything**
+### 2️⃣ **Launch Streamlit Interface (Recommended)**
 ```bash
-# Option A: One-click demo (Recommended)
-python scripts/deploy_complete_demo.py
-
-# Option B: Step by step
-python scripts/populate_dashboard.py  # Create demo studies
-python scripts/start_dashboard.py     # Start Optuna dashboard
-
-# Option C: Streamlit interface
+# Start the enhanced Streamlit dashboard
+python scripts/start_streamlit.py
+# OR
 streamlit run streamlit_app.py
 ```
 
-### 3️⃣ **Explore**
-- 🎛️ **Optuna Dashboard**: [http://localhost:8080](http://localhost:8080)
-- 🎯 **Streamlit Interface**: [http://localhost:8501](http://localhost:8501)
-- 📊 **Run Feature Showcase**: `python scripts/showcase_all_optuna_features.py`
+### 3️⃣ **Explore Everything**
+- 🎯 **Streamlit Dashboard**: [http://localhost:8501](http://localhost:8501) ⭐ **START HERE**
+- 🎛️ **Optuna Dashboard**: [http://localhost:8080](http://localhost:8080) (launch from Streamlit)
+- 📊 **Live Analytics**: Real-time optimization monitoring
+- 🔧 **One-click Tools**: Demo creation, validation, showcase
+
+### 🐳 **Docker Option**
+```bash
+# Launch everything with Docker
+docker-compose up
+# Access Streamlit at http://localhost:8501
+# Access Optuna at http://localhost:8080
+```
 
 ---
 
@@ -96,6 +100,15 @@ This isn't just another hyperparameter tuning example - it's a **comprehensive t
 ✅ **Real-World Application** - Complete pipeline from data to deployment
 
 ## 🌟 Key Features
+
+### 🎯 **Enhanced Streamlit Interface** ⭐ **NEW**
+- **Dashboard Control Center**: Launch and manage Optuna dashboard with one click
+- **Live Analytics**: Real-time optimization monitoring with interactive charts
+- **Study Management**: View, compare, and analyze optimization studies
+- **One-click Tools**: Demo creation, validation, feature showcase
+- **Rich Visualizations**: Interactive Plotly charts and performance metrics
+- **Project Documentation**: Built-in tutorial and guide viewer
+- **Auto-refresh**: Live monitoring with automatic data updates
 
 ### 🔧 **Advanced Optimization Capabilities**
 - **Multi-Model Support**: RandomForest, XGBoost, LightGBM with model-specific optimizations

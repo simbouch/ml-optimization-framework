@@ -1,90 +1,38 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database for Optuna Studies (Optional - for production)
-  postgres:
-    image: postgres:15-alpine
-    container_name: ml-postgres
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-optuna}
-      POSTGRES_USER: ${POSTGRES_USER:-optuna}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-optuna_password}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    networks:
-      - ml-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-optuna}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    profiles:
-      - production
-
-  # Main ML Optimization Service
-  ml-optimizer:
+  # Streamlit Dashboard Service (Primary Interface)
+  streamlit:
     build:
       context: .
       target: base
-    container_name: ml-optimization-framework
+    container_name: ml-streamlit-dashboard
+    command: ["streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501", "--browser.gatherUsageStats=false"]
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
     volumes:
-      - ./results:/home/mlopt/app/results
+      - .:/home/mlopt/app
       - ./studies:/home/mlopt/app/studies
+      - ./results:/home/mlopt/app/results
       - ./logs:/home/mlopt/app/logs
-      - ./data:/home/mlopt/app/data
     environment:
       - PYTHONPATH=/home/mlopt/app
-      - ENVIRONMENT=${ENVIRONMENT:-development}
       - DATABASE_URL=${DATABASE_URL:-sqlite:///studies/optuna_studies.db}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     networks:
       - ml-network
     restart: unless-stopped
-    command: ["python", "scripts/deploy_complete_demo.py"]
 
   # Optuna Dashboard Service
   optuna-dashboard:
     build:
       context: .
       target: base
-    container_name: optuna-dashboard
-    command: ["optuna-dashboard", "postgresql://optuna:optuna_password@postgres:5432/optuna", "--host", "0.0.0.0", "--port", "8080"]
+    container_name: ml-optuna-dashboard
+    command: ["python", "scripts/start_dashboard.py"]
     ports:
-      - "8080:8080"
+      - "${DASHBOARD_PORT:-8080}:8080"
     volumes:
-      - ./studies:/home/mlopt/app/studies
-    environment:
-      - PYTHONPATH=/home/mlopt/app
-    depends_on:
-      postgres:
-        condition: service_healthy
-      ml-optimizer:
-        condition: service_started
-    networks:
-      - ml-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-  # Streamlit Dashboard Service
-  streamlit:
-    build:
-      context: .
-      target: base
-    container_name: ml-streamlit
-    command: ["streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]
-    ports:
-      - "${STREAMLIT_PORT:-8501}:8501"
-    volumes:
-      - .:/home/mlopt/app
       - ./studies:/home/mlopt/app/studies
     environment:
       - PYTHONPATH=/home/mlopt/app
@@ -92,48 +40,7 @@ services:
     networks:
       - ml-network
     restart: unless-stopped
-
-  # Jupyter Notebook Service for Interactive Development
-  jupyter:
-    build:
-      context: .
-      target: base
-    container_name: ml-jupyter
-    command: ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''"]
-    ports:
-      - "8888:8888"
-    volumes:
-      - .:/home/mlopt/app
-      - ./notebooks:/home/mlopt/app/notebooks
-    environment:
-      - PYTHONPATH=/home/mlopt/app
-      - DATABASE_URL=${DATABASE_URL:-sqlite:///studies/optuna_studies.db}
-    networks:
-      - ml-network
-    profiles:
-      - development
-
-  # Redis for distributed optimization (optional)
-  # Usage: docker-compose --profile distributed up
-  redis:
-    image: redis:7-alpine
-    container_name: ml-redis
-    ports:
-      - "6379:6379"
-    networks:
-      - ml-network
-    profiles:
-      - distributed
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
 
 networks:
   ml-network:
     driver: bridge
-
-volumes:
-  postgres_data:
