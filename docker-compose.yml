@@ -1,46 +1,84 @@
 version: '3.8'
 
+networks:
+  ml-optimization-network:
+    driver: bridge
+
+volumes:
+  studies-data:
+    driver: local
+  logs-data:
+    driver: local
+
 services:
-  # Streamlit Dashboard Service (Primary Interface)
-  streamlit:
+  # Streamlit Application Service - Main Web Interface
+  streamlit-app:
     build:
       context: .
-      target: base
-    container_name: ml-streamlit-dashboard
-    command: ["streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501", "--browser.gatherUsageStats=false"]
+      dockerfile: Dockerfile
+    container_name: ml-optimization-streamlit
     ports:
       - "${STREAMLIT_PORT:-8501}:8501"
     volumes:
-      - .:/home/mlopt/app
-      - ./studies:/home/mlopt/app/studies
-      - ./results:/home/mlopt/app/results
-      - ./logs:/home/mlopt/app/logs
+      - ./studies:/app/studies
+      - ./logs:/app/logs
+      - studies-data:/app/studies
+      - logs-data:/app/logs
     environment:
-      - PYTHONPATH=/home/mlopt/app
-      - DATABASE_URL=${DATABASE_URL:-sqlite:///studies/optuna_studies.db}
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    networks:
-      - ml-network
+      - PYTHONUNBUFFERED=1
+      - STREAMLIT_HOST=0.0.0.0
+      - STREAMLIT_PORT=8501
+      - OPTUNA_DASHBOARD_URL=http://optuna-dashboard:8080
+    env_file:
+      - .env
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    depends_on:
+      optuna-dashboard:
+        condition: service_healthy
+    networks:
+      - ml-optimization-network
 
-  # Optuna Dashboard Service
+  # Optuna Dashboard Service - Optimization Visualization
   optuna-dashboard:
     build:
       context: .
-      target: base
-    container_name: ml-optuna-dashboard
-    command: ["python", "scripts/start_dashboard.py"]
+      dockerfile: Dockerfile
+    container_name: ml-optimization-optuna-dashboard
     ports:
-      - "${DASHBOARD_PORT:-8080}:8080"
+      - "${OPTUNA_DASHBOARD_PORT:-8080}:8080"
     volumes:
-      - ./studies:/home/mlopt/app/studies
+      - ./studies:/app/studies
+      - ./logs:/app/logs
+      - studies-data:/app/studies
+      - logs-data:/app/logs
     environment:
-      - PYTHONPATH=/home/mlopt/app
-      - DATABASE_URL=${DATABASE_URL:-sqlite:///studies/optuna_studies.db}
-    networks:
-      - ml-network
+      - PYTHONUNBUFFERED=1
+      - OPTUNA_DASHBOARD_HOST=0.0.0.0
+      - OPTUNA_DASHBOARD_PORT=8080
+    env_file:
+      - .env
     restart: unless-stopped
-
-networks:
-  ml-network:
-    driver: bridge
+    command: >
+      sh -c "
+        sleep 10 &&
+        optuna-dashboard 
+        sqlite:///studies/demo_2d.db 
+        sqlite:///studies/demo_ml.db 
+        sqlite:///studies/demo_multi.db 
+        --host 0.0.0.0 
+        --port 8080
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/studies"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ml-optimization-network

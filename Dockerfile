@@ -1,77 +1,56 @@
-# Multi-stage Docker build for ML Optimization Framework with Optuna Dashboard
-FROM python:3.12-slim as base
+# Production Docker image for ML Optimization Framework with Optuna Integration
+FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PYTHONPATH=/home/mlopt/app
+# Set metadata
+LABEL maintainer="ML Optimization Framework Team"
+LABEL description="Production-ready ML optimization framework with Optuna and Streamlit"
+LABEL version="1.0.0"
+LABEL org.opencontainers.image.source="https://github.com/simbouch/ml-optimization-framework"
 
-# Install system dependencies
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (minimal but comprehensive)
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    git \
     sqlite3 \
+    curl \
+    wget \
+    git \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash mlopt
-WORKDIR /home/mlopt/app
+# Copy requirements first for better Docker layer caching
+COPY requirements-minimal.txt .
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Install Python dependencies with optimizations
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-minimal.txt
 
-# Install Python dependencies as root first
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt && \
-    pip cache purge
+# Copy application files
+COPY simple_app.py .
+COPY start_simple.py .
+COPY quick_demo.py .
+COPY docker-start.py .
+COPY validate_clean.py .
 
-# Copy application code
-COPY . .
+# Create necessary directories with proper permissions
+RUN mkdir -p studies logs results && \
+    chmod 755 studies logs results
 
-# Create necessary directories and set permissions
-RUN mkdir -p logs results plots studies data && \
-    chown -R mlopt:mlopt /home/mlopt/app
-
-# Copy environment file
-COPY .env.example .env
+# Create non-root user with proper permissions
+RUN useradd --create-home --shell /bin/bash mlopt && \
+    chown -R mlopt:mlopt /app && \
+    chmod +x *.py
 
 # Switch to non-root user
 USER mlopt
 
-# Expose ports for dashboard, jupyter, and streamlit
-EXPOSE 8080 8888 8501
+# Expose ports for Streamlit and Optuna Dashboard
+EXPOSE 8501 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import src.data.data_pipeline; print('Framework OK')" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
-# Default command - run comprehensive demo
-CMD ["python", "scripts/deploy_complete_demo.py"]
-
-# Development stage
-FROM base as development
-
-# Install development dependencies
-RUN pip install --user jupyter notebook ipywidgets
-
-# Expose Jupyter port
-EXPOSE 8888
-
-# Start Jupyter by default in dev mode
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
-
-# Production stage
-FROM base as production
-
-# Copy only necessary files
-COPY --from=base --chown=mlopt:mlopt /home/mlopt/app /home/mlopt/app
-
-# Set production environment
-ENV ENVIRONMENT=production
-
-# Start optimization service
-CMD ["python", "scripts/cli_runner.py", "--model", "all", "--n_trials", "100", "--save_results"]
+# Default command
+CMD ["python", "docker-start.py"]
