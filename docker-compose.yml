@@ -1,5 +1,8 @@
 version: '3.8'
 
+# ML Optimization Framework - Simplified Single Service
+# Automatically runs demos and starts Optuna dashboard
+
 networks:
   ml-optimization-network:
     driver: bridge
@@ -9,64 +12,35 @@ volumes:
     driver: local
   logs-data:
     driver: local
+  results-data:
+    driver: local
 
 services:
-  # Streamlit Application Service - Main Web Interface
-  streamlit-app:
+  # ML Optimization Service - Auto Demo + Optuna Dashboard
+  ml-optimization:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ml-optimization-streamlit
-    ports:
-      - "${STREAMLIT_PORT:-8501}:8501"
-    volumes:
-      - studies-data:/app/studies
-      - logs-data:/app/logs
-    environment:
-      - PYTHONUNBUFFERED=1
-      - STREAMLIT_HOST=0.0.0.0
-      - STREAMLIT_PORT=8501
-      - OPTUNA_DASHBOARD_URL=http://optuna-dashboard:8080
-      - PYTHONIOENCODING=utf-8
-      - LANG=C.UTF-8
-    restart: unless-stopped
-    command: ["python", "docker-start.py", "streamlit"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 45s
-    networks:
-      - ml-optimization-network
-    depends_on:
-      - optuna-dashboard
-
-  # Optuna Dashboard Service - Optimization Visualization
-  optuna-dashboard:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ml-optimization-optuna-dashboard
+    container_name: ml-optimization-framework
     ports:
       - "${OPTUNA_DASHBOARD_PORT:-8080}:8080"
     volumes:
       - studies-data:/app/studies
       - logs-data:/app/logs
+      - results-data:/app/results
     environment:
       - PYTHONUNBUFFERED=1
       - OPTUNA_DASHBOARD_HOST=0.0.0.0
       - OPTUNA_DASHBOARD_PORT=8080
-      - SERVICE_TYPE=dashboard
       - PYTHONIOENCODING=utf-8
       - LANG=C.UTF-8
     restart: unless-stopped
-    command: ["python", "docker-start.py", "dashboard"]
+    command: ["sh", "-c", "python create_unified_demo.py && optuna-dashboard sqlite:///studies/unified_demo.db --host 0.0.0.0 --port 8080"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 60s
+      retries: 5
+      start_period: 120s
     networks:
       - ml-optimization-network

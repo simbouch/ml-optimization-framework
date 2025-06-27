@@ -29,15 +29,11 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy source code
 COPY src/ ./src/
 
+# Copy examples
+COPY examples/ ./examples/
+
 # Copy application files
-COPY simple_app.py .
-COPY start_simple.py .
-COPY quick_demo.py .
-COPY comprehensive_optuna_demo.py .
-COPY comprehensive_demo_safe.py .
-COPY docker-start.py .
-COPY validate_clean.py .
-COPY start_both_services.py .
+COPY create_unified_demo.py .
 
 # Create necessary directories with proper permissions
 RUN mkdir -p studies logs results && \
