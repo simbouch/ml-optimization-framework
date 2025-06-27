@@ -70,24 +70,50 @@ pip install -r requirements-minimal.txt
 # 4. Create demo studies
 python quick_demo.py
 
-# 5. Start application
-python start_simple.py
+# 5. Start both services (Streamlit + Optuna Dashboard)
+python start_both_services.py
+
+# 6. Create comprehensive demo (in Streamlit app)
+# Go to http://localhost:8501 and click "🚀 Create Comprehensive Demo"
 ```
 
-**Access at: http://localhost:8501**
+**Access URLs:**
+- 🎨 **Streamlit App**: http://localhost:8501
+- 📊 **Optuna Dashboard**: http://localhost:8080
+
+**📊 Demo Options:**
+- **Simple Demo**: Quick test with 5 trials
+- **🚀 Comprehensive Demo**: Full Optuna feature showcase (all samplers, pruners, ML scenarios)
+
+### Alternative: Individual Service Launch
+
+```bash
+# Option A: Enhanced launcher (starts both services)
+python start_simple.py
+
+# Option B: Manual launch (separate terminals)
+# Terminal 1: Start Streamlit
+streamlit run simple_app.py --server.port 8501
+
+# Terminal 2: Start Optuna Dashboard
+optuna-dashboard sqlite:///studies/demo_ml.db --port 8080
+```
 
 ### Docker Setup (Production)
 
 ```bash
-# 1. Copy environment configuration
-cp .env.example .env
+# Option A: Simple deployment script
+python docker_deploy.py
 
-# 2. Start services with docker-compose
-docker-compose up --build
+# Option B: Manual Docker Compose
+docker-compose up -d --build
 
-# 3. Access services
+# Wait 1-2 minutes for services to initialize, then access:
 # Streamlit App: http://localhost:8501
 # Optuna Dashboard: http://localhost:8080
+
+# Stop services
+docker-compose down
 ```
 
 ### Comprehensive Feature Demo
@@ -396,6 +422,27 @@ find . -name "__pycache__" -type d -exec rm -rf {} +
 - **A/B testing** with multi-objective optimization
 - **Model selection** across different algorithms
 - **Performance monitoring** with study management
+
+## 📚 Documentation & Examples
+
+### 📖 Core Documentation
+- **[Getting Started Guide](docs/GETTING_STARTED.md)**: Complete setup and basic usage
+- **[Advanced Usage Guide](docs/ADVANCED_USAGE.md)**: Advanced features and techniques
+- **[API Reference](docs/API_REFERENCE.md)**: Detailed API documentation
+- **[Comprehensive Tutorial](docs/COMPREHENSIVE_TUTORIAL.md)**: Complete project tutorial
+- **[Dashboard Access Guide](docs/DASHBOARD_ACCESS_GUIDE.md)**: Dashboard usage and troubleshooting
+
+### 💡 Examples & Tutorials
+- **[Basic Optimization](examples/basic_optimization.py)**: Simple optimization scenarios
+- **[Advanced Examples](examples/advanced/)**: Complex multi-objective optimization
+- **[Custom Optimizers](examples/custom/)**: Building your own optimizers
+
+### 🎯 Interactive Demos & Tools
+- **Instant Launch**: `python start_both_services.py` - Start both dashboards instantly
+- **Quick Demo**: `python quick_demo.py` - Fast overview of all features
+- **Comprehensive Demo**: `python comprehensive_optuna_demo.py` - Detailed showcase
+- **Validation Script**: `python validate_clean.py` - Project health check
+- **Service Tester**: `python test_services.py` - Test all components
 
 ## 🤝 Contributing
 

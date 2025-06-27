@@ -20,8 +20,6 @@ services:
     ports:
       - "${STREAMLIT_PORT:-8501}:8501"
     volumes:
-      - ./studies:/app/studies
-      - ./logs:/app/logs
       - studies-data:/app/studies
       - logs-data:/app/logs
     environment:
@@ -29,20 +27,20 @@ services:
       - STREAMLIT_HOST=0.0.0.0
       - STREAMLIT_PORT=8501
       - OPTUNA_DASHBOARD_URL=http://optuna-dashboard:8080
-    env_file:
-      - .env
+      - PYTHONIOENCODING=utf-8
+      - LANG=C.UTF-8
     restart: unless-stopped
+    command: ["python", "docker-start.py", "streamlit"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 40s
-    depends_on:
-      optuna-dashboard:
-        condition: service_healthy
+      retries: 3
+      start_period: 45s
     networks:
       - ml-optimization-network
+    depends_on:
+      - optuna-dashboard
 
   # Optuna Dashboard Service - Optimization Visualization
   optuna-dashboard:
@@ -53,32 +51,22 @@ services:
     ports:
       - "${OPTUNA_DASHBOARD_PORT:-8080}:8080"
     volumes:
-      - ./studies:/app/studies
-      - ./logs:/app/logs
       - studies-data:/app/studies
       - logs-data:/app/logs
     environment:
       - PYTHONUNBUFFERED=1
       - OPTUNA_DASHBOARD_HOST=0.0.0.0
       - OPTUNA_DASHBOARD_PORT=8080
-    env_file:
-      - .env
+      - SERVICE_TYPE=dashboard
+      - PYTHONIOENCODING=utf-8
+      - LANG=C.UTF-8
     restart: unless-stopped
-    command: >
-      sh -c "
-        sleep 10 &&
-        optuna-dashboard 
-        sqlite:///studies/demo_2d.db 
-        sqlite:///studies/demo_ml.db 
-        sqlite:///studies/demo_multi.db 
-        --host 0.0.0.0 
-        --port 8080
-      "
+    command: ["python", "docker-start.py", "dashboard"]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/studies"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 3
+      start_period: 60s
     networks:
       - ml-optimization-network

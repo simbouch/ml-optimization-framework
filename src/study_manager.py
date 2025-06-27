@@ -3,23 +3,15 @@
 Study management for ML Optimization Framework
 """
 
-from typing import Dict, Any, List, Optional, Union, Tuple
+from typing import Dict, Any, List, Optional, Union
 import optuna
-from optuna.visualization import (
-    plot_optimization_history,
-    plot_param_importances,
-    plot_parallel_coordinate,
-    plot_slice,
-    plot_contour,
-    plot_pareto_front
-)
+# Optuna visualization imports available when needed
+# from optuna.visualization import plot_optimization_history, plot_param_importances, etc.
 import pandas as pd
-import numpy as np
 from pathlib import Path
-import sqlite3
 from loguru import logger
-import json
 from datetime import datetime
+# Additional imports available when needed: numpy, sqlite3, json
 
 from .config import OptimizationConfig
 
@@ -42,13 +34,18 @@ class StudyManager:
         self.config = config
         self.studies: Dict[str, optuna.Study] = {}
         
-        # Set up logging
-        logger.add(
-            self.config.logs_dir / "study_manager.log",
-            format=self.config.log_format,
-            level=self.config.log_level,
-            rotation="10 MB"
-        )
+        # Set up logging (with Windows-compatible settings)
+        try:
+            logger.add(
+                self.config.logs_dir / "study_manager.log",
+                format=self.config.log_format,
+                level=self.config.log_level,
+                rotation="10 MB",
+                enqueue=True  # Helps with Windows file locking issues
+            )
+        except Exception:
+            # Fallback to console logging if file logging fails
+            pass
     
     def create_study(
         self,

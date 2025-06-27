@@ -4,7 +4,7 @@ Model optimizers for ML Optimization Framework
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, Union, List, Tuple
+from typing import Dict, Any, Optional, Union, List
 import optuna
 from optuna.samplers import TPESampler, RandomSampler, CmaEsSampler, GridSampler, QMCSampler
 from optuna.pruners import MedianPruner, SuccessiveHalvingPruner, HyperbandPruner
@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.svm import SVC, SVR
 import numpy as np
-import pandas as pd
+# pandas imported when needed
 from loguru import logger
 
 from .config import OptimizationConfig, ModelConfig
@@ -40,13 +40,18 @@ class ModelOptimizer(ABC):
         self.best_params: Optional[Dict[str, Any]] = None
         self.best_score: Optional[float] = None
         
-        # Set up logging
-        logger.add(
-            self.config.logs_dir / f"{self.config.study_name}.log",
-            format=self.config.log_format,
-            level=self.config.log_level,
-            rotation="10 MB"
-        )
+        # Set up logging (with Windows-compatible settings)
+        try:
+            logger.add(
+                self.config.logs_dir / f"{self.config.study_name}.log",
+                format=self.config.log_format,
+                level=self.config.log_level,
+                rotation="10 MB",
+                enqueue=True  # Helps with Windows file locking issues
+            )
+        except Exception:
+            # Fallback to console logging if file logging fails
+            pass
     
     def create_study(self) -> optuna.Study:
         """Create and configure Optuna study."""

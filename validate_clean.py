@@ -49,9 +49,9 @@ def test_file_syntax():
             with open(file_path, 'r', encoding='utf-8') as f:
                 code = f.read()
             compile(code, file_path, 'exec')
-            print(f"  ✓ {file_path}")
+            print(f"  [OK] {file_path}")
         except (SyntaxError, FileNotFoundError) as e:
-            print(f"  ✗ {file_path} - {e}")
+            print(f"  [FAIL] {file_path} - {e}")
             all_good = False
     
     return all_good

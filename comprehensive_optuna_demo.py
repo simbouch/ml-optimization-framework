@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Comprehensive Optuna Feature Demonstration
 This script showcases ALL major Optuna capabilities in a production-ready framework.
 """
+
+import sys
+import os
+
+# Fix Windows console encoding issues
+if sys.platform.startswith('win'):
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
 
 import optuna
 import numpy as np

@@ -5,11 +5,9 @@ Simple Working Streamlit App for ML Optimization Framework
 
 import streamlit as st
 import subprocess
+import sys
 import time
 import os
-import sqlite3
-import pandas as pd
-import plotly.express as px
 from pathlib import Path
 
 # Page configuration
@@ -97,15 +95,40 @@ else:
 
 # Demo controls
 st.sidebar.markdown("---")
-st.sidebar.subheader("📊 Demo")
+st.sidebar.subheader("📊 Demo Options")
 
-if st.sidebar.button("Create Demo Study"):
-    with st.spinner("Creating demo optimization study..."):
+if st.sidebar.button("Create Simple Demo Study"):
+    with st.spinner("Creating simple demo optimization study..."):
         success, result = create_demo_study()
         if success:
             st.sidebar.success(f"✅ Created study with {result} trials")
         else:
             st.sidebar.error(f"❌ Error: {result}")
+
+if st.sidebar.button("🚀 Create Comprehensive Demo"):
+    with st.spinner("Creating comprehensive Optuna demonstration... This may take 2-3 minutes."):
+        try:
+            # Try the safe version first
+            result = subprocess.run([sys.executable, "comprehensive_demo_safe.py"],
+                                  capture_output=True, timeout=300, text=True)
+            if result.returncode == 0:
+                st.sidebar.success("✅ Comprehensive demo completed! Multiple studies created.")
+                st.sidebar.info("🔄 Refresh the Optuna dashboard to see all new studies.")
+                st.sidebar.info("📊 Studies created: TPE, Random, CMA-ES, Pruning, Multi-objective")
+            else:
+                st.sidebar.error(f"❌ Demo failed: {result.stderr}")
+                # Fallback to original version
+                st.sidebar.info("🔄 Trying alternative demo...")
+                result2 = subprocess.run([sys.executable, "comprehensive_optuna_demo.py"],
+                                       capture_output=True, timeout=300, text=True)
+                if result2.returncode == 0:
+                    st.sidebar.success("✅ Alternative demo completed!")
+                else:
+                    st.sidebar.error("❌ Both demo versions failed. Try running manually.")
+        except subprocess.TimeoutExpired:
+            st.sidebar.warning("⏱️ Demo is taking longer than expected but may still be running.")
+        except Exception as e:
+            st.sidebar.error(f"❌ Error running comprehensive demo: {e}")
 
 # Main content
 col1, col2 = st.columns(2)
@@ -114,9 +137,13 @@ with col1:
     st.subheader("📈 Quick Start")
     st.markdown("""
     1. **Launch Dashboard**: Click the button in the sidebar
-    2. **Create Demo**: Generate a simple optimization study
+    2. **Create Demo**: Choose between simple or comprehensive demo
     3. **View Results**: Open the dashboard to see visualizations
     4. **Explore**: Try different optimization parameters
+
+    **Demo Options:**
+    - 🔹 **Simple Demo**: Quick 5-trial optimization study
+    - 🚀 **Comprehensive Demo**: Full Optuna feature showcase with multiple studies
     """)
     
     # Show available studies
@@ -163,4 +190,4 @@ st.markdown("**ML Optimization Framework** - Simple, Fast, Effective")
 # Auto-refresh option
 if st.sidebar.checkbox("Auto-refresh (30s)"):
     time.sleep(30)
-    st.experimental_rerun()
+    st.rerun()

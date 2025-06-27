@@ -5,7 +5,6 @@ Tests for study manager
 
 import pytest
 import tempfile
-import optuna
 import pandas as pd
 from pathlib import Path
 from sklearn.datasets import make_classification
@@ -82,7 +81,11 @@ class TestStudyManager:
         )
         
         assert study is not None
-        assert study.directions == ["maximize", "minimize"]
+        # Check that directions are set correctly (Optuna returns enum objects)
+        assert len(study.directions) == 2
+        # Check the enum values directly
+        assert study.directions[0].name == "MAXIMIZE"
+        assert study.directions[1].name == "MINIMIZE"
     
     def test_load_study(self, study_manager, sample_study):
         """Test study loading."""
@@ -256,7 +259,22 @@ class TestStudyManager:
 
 class TestStudyManagerIntegration:
     """Test StudyManager integration scenarios."""
-    
+
+    @pytest.fixture
+    def temp_config(self):
+        """Create temporary configuration for testing."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            config = OptimizationConfig(
+                study_name="integration_test",
+                n_trials=5,
+                data_dir=temp_path / "data",
+                results_dir=temp_path / "results",
+                studies_dir=temp_path / "studies",
+                logs_dir=temp_path / "logs"
+            )
+            yield config
+
     def test_real_ml_optimization_workflow(self, temp_config):
         """Test complete ML optimization workflow."""
         from src.optimizers import RandomForestOptimizer
