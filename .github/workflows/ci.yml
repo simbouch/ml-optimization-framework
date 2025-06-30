@@ -42,7 +42,7 @@ jobs:
 
     - name: Create necessary directories
       run: |
-        mkdir -p logs results studies
+        New-Item -ItemType Directory -Force -Path studies
 
     - name: Run code formatting check (Black)
       run: black --check --diff *.py
@@ -116,7 +116,7 @@ jobs:
 
     - name: Create necessary directories
       run: |
-        mkdir -p logs results studies
+        New-Item -ItemType Directory -Force -Path studies
 
     - name: Test Python syntax
       run: |
@@ -165,7 +165,7 @@ jobs:
 
     - name: Create necessary directories
       run: |
-        mkdir -p logs results studies
+        New-Item -ItemType Directory -Force -Path studies
 
     - name: Run framework validation
       run: |
