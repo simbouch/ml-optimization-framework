@@ -17,7 +17,7 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 
 from src.config import OptimizationConfig
-from src.optimizers import RandomForestOptimizer, XGBoostOptimizer, SVMOptimizer
+from src.optimizers import RandomForestOptimizer, GradientBoostingOptimizer, SVMOptimizer
 from src.study_manager import StudyManager
 
 def basic_classification_example():
@@ -103,7 +103,7 @@ def basic_regression_example():
     )
     
     # Initialize optimizer
-    optimizer = XGBoostOptimizer(config, task_type="regression")
+    optimizer = GradientBoostingOptimizer(config, task_type="regression")
     
     print(f"📊 Dataset: {X.shape[0]} samples, {X.shape[1]} features")
     print(f"🔧 Configuration: {config.n_trials} trials")
@@ -157,7 +157,7 @@ def compare_optimizers_example():
     # Define optimizers to compare
     optimizers = {
         "Random Forest": RandomForestOptimizer(config, task_type="classification"),
-        "XGBoost": XGBoostOptimizer(config, task_type="classification"),
+        "Gradient Boosting": GradientBoostingOptimizer(config, task_type="classification"),
         "SVM": SVMOptimizer(config, task_type="classification")
     }
     

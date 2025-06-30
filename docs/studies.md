@@ -31,27 +31,27 @@ Demonstrate the effectiveness of TPE (Tree-structured Parzen Estimator) sampling
 - TPE should outperform random sampling
 - `n_estimators` and `max_depth` typically most important
 
-## Study 2: XGBoost Regression (Random)
+## Study 2: Gradient Boosting Regression (Random)
 
 ### Purpose
-Compare random sampling approach and demonstrate XGBoost optimization.
+Compare random sampling approach and demonstrate gradient boosting optimization.
 
 ### Configuration
-- **Model**: XGBoost Regressor
+- **Model**: Gradient Boosting Regressor
 - **Dataset**: Synthetic regression (1000 samples, 20 features)
 - **Sampler**: Random Sampler
 - **Objective**: Minimize MSE (Mean Squared Error)
 - **Trials**: 25
 
 ### Parameters Optimized
-- `n_estimators` (50-300): Number of boosting rounds
+- `n_estimators` (50-200): Number of boosting rounds
 - `max_depth` (3-10): Maximum tree depth
 - `learning_rate` (0.01-0.3): Step size shrinkage
 - `subsample` (0.6-1.0): Subsample ratio of training instances
 
 ### Key Learning Points
 - **Random Exploration**: Uniform exploration across parameter space
-- **XGBoost Behavior**: How gradient boosting parameters interact
+- **Gradient Boosting Behavior**: How boosting parameters interact
 - **Regression Metrics**: Different from classification (MSE vs accuracy)
 
 ### Expected Results

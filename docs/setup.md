@@ -32,14 +32,14 @@ Open http://localhost:8080 in your browser
 
 ### Container Build Process
 1. **Base Image**: Python 3.10 slim
-2. **Dependencies**: Installs Optuna, scikit-learn, XGBoost, etc.
+2. **Dependencies**: Installs Optuna, scikit-learn, etc.
 3. **Framework Code**: Copies source code and demo scripts
 4. **Study Creation**: Runs unified demo to create 6 studies
 5. **Dashboard Start**: Launches Optuna dashboard on port 8080
 
 ### Studies Created
 1. **RandomForest_Classification_TPE** (30 trials)
-2. **XGBoost_Regression_Random** (25 trials)
+2. **GradientBoosting_Regression_Random** (25 trials)
 3. **SVM_Classification_Pruning** (20 trials)
 4. **MultiObjective_Accuracy_vs_Complexity** (25 trials)
 5. **LogisticRegression_Comparison** (20 trials)

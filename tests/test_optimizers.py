@@ -11,7 +11,7 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split
 
 from src.config import OptimizationConfig
-from src.optimizers import RandomForestOptimizer, XGBoostOptimizer, SVMOptimizer
+from src.optimizers import RandomForestOptimizer, GradientBoostingOptimizer, SVMOptimizer
 
 
 class TestModelOptimizers:
@@ -121,42 +121,39 @@ class TestRandomForestOptimizer(TestModelOptimizers):
             optimizer.get_best_model()
 
 
-class TestXGBoostOptimizer(TestModelOptimizers):
-    """Test XGBoost optimizer."""
-    
-    def test_xgboost_optimization_or_fallback(self, classification_data, temp_config):
-        """Test XGBoost optimization or fallback to RandomForest."""
+class TestGradientBoostingOptimizer(TestModelOptimizers):
+    """Test Gradient Boosting optimizer."""
+
+    def test_gradient_boosting_optimization(self, classification_data, temp_config):
+        """Test Gradient Boosting optimization."""
         X_train, X_test, y_train, y_test = classification_data
-        
-        optimizer = XGBoostOptimizer(temp_config, task_type="classification")
+
+        optimizer = GradientBoostingOptimizer(temp_config, task_type="classification")
         study = optimizer.optimize(X_train, y_train)
-        
+
         assert study is not None
         assert len(study.trials) == temp_config.n_trials
         assert optimizer.best_params is not None
         assert optimizer.best_score is not None
-        
-        # Test best model creation (should work with or without XGBoost)
+
+        # Test best model creation
         best_model = optimizer.get_best_model()
         assert best_model is not None
-    
-    def test_xgboost_parameter_suggestions(self, temp_config):
-        """Test XGBoost parameter suggestions."""
+
+    def test_gradient_boosting_parameter_suggestions(self, temp_config):
+        """Test Gradient Boosting parameter suggestions."""
         import optuna
-        
-        optimizer = XGBoostOptimizer(temp_config, task_type="classification")
+
+        optimizer = GradientBoostingOptimizer(temp_config, task_type="classification")
         study = optuna.create_study()
         trial = study.ask()
-        
+
         params = optimizer.suggest_parameters(trial)
-        
+
         assert "n_estimators" in params
         assert "max_depth" in params
         assert "learning_rate" in params
         assert "subsample" in params
-        assert "colsample_bytree" in params
-        assert "reg_alpha" in params
-        assert "reg_lambda" in params
         assert "random_state" in params
 
 

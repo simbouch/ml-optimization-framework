@@ -17,7 +17,7 @@ Creates a unified database with 6 different optimization studies.
 
 **Studies Created**:
 1. RandomForest_Classification_TPE
-2. XGBoost_Regression_Random  
+2. GradientBoosting_Regression_Random
 3. SVM_Classification_Pruning
 4. MultiObjective_Accuracy_vs_Complexity
 5. LogisticRegression_Comparison
@@ -94,23 +94,23 @@ def rf_classification_objective(trial):
     return scores.mean()
 ```
 
-### Study 2: XGBoost Regression
+### Study 2: Gradient Boosting Regression
 
 ```python
-def xgb_regression_objective(trial):
-    n_estimators = trial.suggest_int('n_estimators', 50, 300)
+def gb_regression_objective(trial):
+    n_estimators = trial.suggest_int('n_estimators', 50, 200)
     max_depth = trial.suggest_int('max_depth', 3, 10)
     learning_rate = trial.suggest_float('learning_rate', 0.01, 0.3)
     subsample = trial.suggest_float('subsample', 0.6, 1.0)
-    
-    model = xgb.XGBRegressor(
+
+    model = GradientBoostingRegressor(
         n_estimators=n_estimators,
         max_depth=max_depth,
         learning_rate=learning_rate,
         subsample=subsample,
         random_state=42
     )
-    
+
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
     mse = np.mean((y_test - predictions) ** 2)
@@ -238,7 +238,8 @@ numpy>=1.24.0          # Numerical computing
 pandas>=2.0.0          # Data manipulation
 plotly>=5.15.0         # Visualization
 optuna-dashboard>=0.13.0  # Web dashboard
-xgboost>=1.7.0         # Gradient boosting
+# Removed XGBoost to avoid large download timeouts
+# Can be added back when needed: xgboost>=1.7.0
 loguru>=0.7.0          # Logging
 pytest>=7.0.0          # Testing
 ```

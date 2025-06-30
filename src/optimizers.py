@@ -229,44 +229,33 @@ class RandomForestOptimizer(ModelOptimizer):
             return RandomForestRegressor(**params)
 
 
-class XGBoostOptimizer(ModelOptimizer):
-    """XGBoost optimizer implementation."""
+class GradientBoostingOptimizer(ModelOptimizer):
+    """Gradient Boosting optimizer implementation."""
 
     def __init__(self, config: OptimizationConfig, task_type: str = "classification"):
         """
-        Initialize XGBoost optimizer.
+        Initialize Gradient Boosting optimizer.
 
         Args:
             config: Optimization configuration
             task_type: "classification" or "regression"
         """
-        model_config = ModelConfig(model_type="XGBoost")
+        model_config = ModelConfig(model_type="GradientBoosting")
         super().__init__(config, model_config)
         self.task_type = task_type
 
     def suggest_parameters(self, trial: optuna.Trial) -> Dict[str, Any]:
-        """Suggest XGBoost hyperparameters."""
+        """Suggest Gradient Boosting hyperparameters."""
         return {
-            "n_estimators": trial.suggest_int("n_estimators", 50, 300),
+            "n_estimators": trial.suggest_int("n_estimators", 50, 200),
             "max_depth": trial.suggest_int("max_depth", 3, 10),
             "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
             "subsample": trial.suggest_float("subsample", 0.6, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 1.0),
-            "reg_alpha": trial.suggest_float("reg_alpha", 0.0, 1.0),
-            "reg_lambda": trial.suggest_float("reg_lambda", 0.0, 1.0),
             "random_state": self.config.random_seed,
         }
 
     def objective(self, trial: optuna.Trial) -> float:
-        """XGBoost objective function."""
-        try:
-            import xgboost as xgb
-        except ImportError:
-            logger.warning("XGBoost not installed, using Random Forest instead")
-            # Fallback to Random Forest
-            rf_optimizer = RandomForestOptimizer(self.config, self.task_type)
-            return rf_optimizer.objective(trial)
-
+        """Gradient Boosting objective function."""
         params = self.suggest_parameters(trial)
         model = self._create_model(params)
 
@@ -282,27 +271,13 @@ class XGBoostOptimizer(ModelOptimizer):
         return scores.mean()
 
     def _create_model(self, params: Dict[str, Any]):
-        """Create XGBoost model."""
-        try:
-            import xgboost as xgb
-            if self.task_type == "classification":
-                return xgb.XGBClassifier(**params)
-            else:
-                return xgb.XGBRegressor(**params)
-        except ImportError:
-            # Fallback to Random Forest
-            if self.task_type == "classification":
-                return RandomForestClassifier(
-                    n_estimators=params.get("n_estimators", 100),
-                    max_depth=params.get("max_depth", 10),
-                    random_state=params.get("random_state", 42)
-                )
-            else:
-                return RandomForestRegressor(
-                    n_estimators=params.get("n_estimators", 100),
-                    max_depth=params.get("max_depth", 10),
-                    random_state=params.get("random_state", 42)
-                )
+        """Create Gradient Boosting model."""
+        from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
+
+        if self.task_type == "classification":
+            return GradientBoostingClassifier(**params)
+        else:
+            return GradientBoostingRegressor(**params)
 
 
 class SVMOptimizer(ModelOptimizer):

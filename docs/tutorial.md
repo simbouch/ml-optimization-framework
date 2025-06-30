@@ -243,7 +243,7 @@ This project demonstrates all major Optuna features through 6 different studies:
 **Purpose**: Show how TPE intelligently explores the parameter space
 **Key Learning**: TPE focuses on promising regions after initial exploration
 
-### Study 2: Random Sampling (XGBoost Regression)
+### Study 2: Random Sampling (Gradient Boosting Regression)
 **Purpose**: Baseline comparison with random search
 **Key Learning**: Random search explores uniformly but less efficiently
 
@@ -263,208 +263,158 @@ This project demonstrates all major Optuna features through 6 different studies:
 **Purpose**: Show optimization for different ML tasks
 **Key Learning**: Different metrics require different optimization approaches
 
-## 🛠 Hands-on Practice
+## 🛠 Practice Projects for Self-Learning
 
-### Exercise 1: Basic Optimization
-**Goal**: Optimize a Random Forest classifier for your colleagues
+After exploring this framework, here are **practice projects** you should implement yourself to master Optuna:
 
+### 🎯 **Project 1: Personal Dataset Optimization**
+**Goal**: Apply Optuna to your own dataset
+**Instructions**:
+1. **Choose your dataset**: Use a dataset from your work or download from Kaggle
+2. **Select a model**: Start with Random Forest or Gradient Boosting
+3. **Define objective**: Classification accuracy or regression MSE
+4. **Optimize 3-5 parameters**: Don't optimize too many at once
+5. **Compare results**: Default vs optimized model performance
+
+**Example structure**:
 ```python
-import optuna
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split, cross_val_score
+def my_objective(trial):
+    # Your hyperparameters here
+    param1 = trial.suggest_int('param1', min_val, max_val)
+    param2 = trial.suggest_float('param2', min_val, max_val)
 
-# Load a real dataset
-data = load_breast_cancer()
-X, y = data.data, data.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Your model here
+    model = YourModel(param1=param1, param2=param2)
 
-def exercise_objective(trial):
-    # Suggest hyperparameters
-    n_estimators = trial.suggest_int('n_estimators', 10, 200)
-    max_depth = trial.suggest_int('max_depth', 1, 20)
-    min_samples_split = trial.suggest_int('min_samples_split', 2, 20)
-
-    # Create model with suggested parameters
-    model = RandomForestClassifier(
-        n_estimators=n_estimators,
-        max_depth=max_depth,
-        min_samples_split=min_samples_split,
-        random_state=42
-    )
-
-    # Evaluate with cross-validation
-    scores = cross_val_score(model, X_train, y_train, cv=3, scoring='accuracy')
+    # Your evaluation here
+    scores = cross_val_score(model, X, y, cv=3)
     return scores.mean()
-
-# Create and run study
-study = optuna.create_study(direction='maximize')
-study.optimize(exercise_objective, n_trials=50)
-
-print(f"Best accuracy: {study.best_value:.4f}")
-print(f"Best parameters: {study.best_params}")
-
-# Test on holdout set
-best_model = RandomForestClassifier(**study.best_params, random_state=42)
-best_model.fit(X_train, y_train)
-test_accuracy = best_model.score(X_test, y_test)
-print(f"Test accuracy: {test_accuracy:.4f}")
 ```
 
-### Exercise 2: Compare Different Samplers
-**Goal**: Understand the difference between TPE and Random sampling
+### 🎯 **Project 2: Multi-Model Comparison**
+**Goal**: Compare different algorithms with optimization
+**Instructions**:
+1. **Choose 3 models**: e.g., Random Forest, Gradient Boosting, SVM
+2. **Optimize each separately**: Different parameters for each
+3. **Compare final results**: Which model + optimization works best?
+4. **Analyze parameter importance**: Which parameters matter most?
+5. **Document findings**: Create a comparison report
 
+**Models to try**:
+- Random Forest (n_estimators, max_depth, min_samples_split)
+- Gradient Boosting (n_estimators, learning_rate, max_depth)
+- SVM (C, gamma, kernel)
+- Neural Network (hidden_layer_sizes, learning_rate, alpha)
+
+### 🎯 **Project 3: Advanced Pruning Implementation**
+**Goal**: Implement efficient optimization with pruning
+**Instructions**:
+1. **Choose a slow model**: Neural networks or large ensembles
+2. **Implement intermediate reporting**: Report validation scores during training
+3. **Add pruning**: Use MedianPruner or SuccessiveHalvingPruner
+4. **Compare efficiency**: Pruning vs no pruning (time and results)
+5. **Tune pruning parameters**: Experiment with different pruning settings
+
+**Example with neural network**:
 ```python
-def compare_samplers():
-    # Same objective function as above
-    def objective(trial):
-        n_estimators = trial.suggest_int('n_estimators', 10, 200)
-        max_depth = trial.suggest_int('max_depth', 1, 20)
+def pruning_objective(trial):
+    # Suggest parameters
+    hidden_size = trial.suggest_int('hidden_size', 50, 200)
+    learning_rate = trial.suggest_float('learning_rate', 0.001, 0.1, log=True)
 
-        model = RandomForestClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            random_state=42
-        )
+    model = MLPClassifier(hidden_layer_sizes=(hidden_size,),
+                         learning_rate_init=learning_rate)
 
-        scores = cross_val_score(model, X_train, y_train, cv=3)
-        return scores.mean()
+    # Train with intermediate reporting
+    for epoch in range(10):
+        # Partial training
+        model.partial_fit(X_train_partial, y_train_partial)
 
-    # TPE Sampler (default)
-    study_tpe = optuna.create_study(
-        direction='maximize',
-        sampler=optuna.samplers.TPESampler(seed=42)
-    )
-    study_tpe.optimize(objective, n_trials=50)
+        # Evaluate
+        score = model.score(X_val, y_val)
 
-    # Random Sampler
-    study_random = optuna.create_study(
-        direction='maximize',
-        sampler=optuna.samplers.RandomSampler(seed=42)
-    )
-    study_random.optimize(objective, n_trials=50)
+        # Report and check pruning
+        trial.report(score, epoch)
+        if trial.should_prune():
+            raise optuna.TrialPruned()
 
-    print(f"TPE Best: {study_tpe.best_value:.4f}")
-    print(f"Random Best: {study_random.best_value:.4f}")
-    print(f"TPE is {study_tpe.best_value - study_random.best_value:.4f} better")
-
-compare_samplers()
+    return final_score
 ```
 
-### Exercise 3: Multi-objective Optimization
-**Goal**: Balance accuracy and model complexity
+### 🎯 **Project 4: Multi-Objective Real Problem**
+**Goal**: Solve a real trade-off optimization problem
+**Instructions**:
+1. **Identify trade-offs**: Accuracy vs Speed, Accuracy vs Memory, etc.
+2. **Define both objectives**: Make sure they conflict
+3. **Run multi-objective optimization**: Use directions=['maximize', 'minimize']
+4. **Analyze Pareto front**: Find optimal trade-off solutions
+5. **Choose final solution**: Based on your real constraints
 
-```python
-def multi_objective_exercise(trial):
-    n_estimators = trial.suggest_int('n_estimators', 10, 200)
-    max_depth = trial.suggest_int('max_depth', 1, 20)
+**Example trade-offs to explore**:
+- Model accuracy vs prediction time
+- Model accuracy vs model size (number of parameters)
+- Model accuracy vs training time
+- Precision vs Recall in imbalanced datasets
 
-    model = RandomForestClassifier(
-        n_estimators=n_estimators,
-        max_depth=max_depth,
-        random_state=42
-    )
+### 🎯 **Project 5: Production Pipeline Integration**
+**Goal**: Integrate Optuna into a complete ML pipeline
+**Instructions**:
+1. **Create full pipeline**: Data loading, preprocessing, training, evaluation
+2. **Add hyperparameter optimization**: Optimize preprocessing + model parameters
+3. **Implement study persistence**: Save studies to database
+4. **Add visualization**: Create plots of optimization progress
+5. **Deploy best model**: Save and load optimized model for production
 
-    # Objective 1: Maximize accuracy
-    scores = cross_val_score(model, X_train, y_train, cv=3)
-    accuracy = scores.mean()
+**Pipeline components to optimize**:
+- Feature selection (number of features, selection method)
+- Preprocessing (scaling method, PCA components)
+- Model hyperparameters
+- Ensemble weights (if using multiple models)
 
-    # Objective 2: Minimize model complexity
-    complexity = n_estimators * max_depth
+### 🎯 **Project 6: Custom Sampler/Pruner**
+**Goal**: Implement your own optimization strategy (Advanced)
+**Instructions**:
+1. **Study existing samplers**: Understand TPE, Random, CMA-ES code
+2. **Identify improvement opportunity**: Domain-specific knowledge
+3. **Implement custom sampler**: Inherit from BaseSampler
+4. **Test on your problem**: Compare with standard samplers
+5. **Document performance**: When does your sampler work better?
 
-    return accuracy, -complexity  # Minimize complexity (negative)
+### 📋 **Success Criteria for Each Project**
 
-# Multi-objective study
-study_multi = optuna.create_study(directions=['maximize', 'maximize'])
-study_multi.optimize(multi_objective_exercise, n_trials=100)
+For each project, you should be able to:
+- ✅ **Explain the problem**: What are you optimizing and why?
+- ✅ **Show improvement**: Quantify the benefit of optimization
+- ✅ **Understand parameters**: Which parameters matter most?
+- ✅ **Visualize results**: Create plots of optimization progress
+- ✅ **Document learnings**: What did you discover?
 
-# Analyze Pareto front
-pareto_trials = study_multi.best_trials
-print(f"Found {len(pareto_trials)} Pareto optimal solutions:")
+### 🎓 **Learning Progression**
 
-for i, trial in enumerate(pareto_trials[:5]):  # Show first 5
-    accuracy = trial.values[0]
-    complexity = -trial.values[1]  # Convert back to positive
-    print(f"Solution {i+1}: Accuracy={accuracy:.4f}, Complexity={complexity}")
-```
+**Week 1**: Project 1 (Personal Dataset)
+**Week 2**: Project 2 (Multi-Model Comparison)
+**Week 3**: Project 3 (Pruning Implementation)
+**Week 4**: Project 4 (Multi-Objective)
+**Week 5**: Project 5 (Production Pipeline)
+**Week 6**: Project 6 (Custom Sampler) - Optional Advanced
 
-### Exercise 4: Real-World Example for Colleagues
-**Complete working example they can run immediately**
+### 💡 **Tips for Success**
 
-```python
-"""
-Complete Optuna Example: Optimizing XGBoost for Regression
-Perfect for sharing with colleagues who want to learn Optuna
-"""
+1. **Start small**: Begin with 2-3 parameters, expand gradually
+2. **Use cross-validation**: Always validate your results properly
+3. **Save your work**: Use study persistence for long optimizations
+4. **Visualize progress**: Use Optuna's plotting functions
+5. **Document everything**: Keep notes on what works and what doesn't
+6. **Share results**: Discuss findings with colleagues
+7. **Iterate**: Refine your approach based on results
 
-import optuna
-import xgboost as xgb
-from sklearn.datasets import load_diabetes
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import mean_squared_error
-import numpy as np
+### 🚀 **Next Steps After Projects**
 
-def colleague_example():
-    print("🎯 Optuna Tutorial: XGBoost Regression Optimization")
-    print("=" * 60)
-
-    # Load dataset
-    print("📊 Loading diabetes dataset...")
-    data = load_diabetes()
-    X, y = data.data, data.target
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Define objective function
-    def objective(trial):
-        # Suggest hyperparameters
-        params = {
-            'n_estimators': trial.suggest_int('n_estimators', 50, 300),
-            'max_depth': trial.suggest_int('max_depth', 3, 10),
-            'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
-            'subsample': trial.suggest_float('subsample', 0.6, 1.0),
-            'random_state': 42
-        }
-
-        # Create and evaluate model
-        model = xgb.XGBRegressor(**params)
-
-        # Use negative MSE (since Optuna maximizes)
-        scores = cross_val_score(model, X_train, y_train, cv=3,
-                                scoring='neg_mean_squared_error')
-        return scores.mean()
-
-    # Create and run optimization
-    print("🔍 Starting optimization...")
-    study = optuna.create_study(direction='maximize')
-    study.optimize(objective, n_trials=50, show_progress_bar=True)
-
-    # Results
-    print("\n📈 Optimization Results:")
-    print(f"Best score: {study.best_value:.4f}")
-    print(f"Best parameters: {study.best_params}")
-
-    # Test final model
-    print("\n🧪 Testing optimized model...")
-    best_model = xgb.XGBRegressor(**study.best_params)
-    best_model.fit(X_train, y_train)
-
-    # Compare with default model
-    default_model = xgb.XGBRegressor(random_state=42)
-    default_model.fit(X_train, y_train)
-
-    optimized_mse = mean_squared_error(y_test, best_model.predict(X_test))
-    default_mse = mean_squared_error(y_test, default_model.predict(X_test))
-
-    print(f"Optimized MSE: {optimized_mse:.2f}")
-    print(f"Default MSE: {default_mse:.2f}")
-    print(f"Improvement: {((default_mse - optimized_mse) / default_mse * 100):.1f}%")
-
-    return study
-
-# Run the example
-if __name__ == "__main__":
-    study = colleague_example()
-```
+Once you complete these projects:
+- **Apply to work problems**: Use Optuna in your daily ML tasks
+- **Teach others**: Share your knowledge with team members
+- **Contribute**: Consider contributing to Optuna open source
+- **Stay updated**: Follow Optuna releases and new features
 
 ## 📋 Best Practices
 

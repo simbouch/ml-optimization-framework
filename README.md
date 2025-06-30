@@ -19,33 +19,23 @@ This project is designed to **teach Optuna** - the automatic hyperparameter opti
 
 ## 🚀 Quick Start
 
-### **Option 1: Interactive Tutorial Launcher (Recommended)**
-```powershell
-.\start-tutorial.ps1
-```
-Choose from:
-- 🚀 Interactive Dashboard with 6 studies
-- 📖 Complete colleague tutorial example
-- ⚡ Quick 30-second demo
-- 📋 Documentation browser
-
-### **Option 2: Direct Dashboard Access**
+### **Start Interactive Dashboard**
 ```bash
 docker-compose up -d --build
 ```
 **Then open:** http://localhost:8080
 
-### **Option 3: Colleague Tutorial Example**
-```bash
-python optuna_colleague_example.py
-```
-Perfect standalone example to share with team members!
+### **What You'll See**
+- **6 Different Studies** showcasing various Optuna techniques
+- **Interactive Visualizations** for understanding optimization
+- **Real ML Examples** with actual models and datasets
+- **Educational Content** perfect for learning and teaching
 
 ## 📊 What You'll See
 
 **6 Different Optimization Studies:**
 1. **RandomForest Classification (TPE)** - Smart hyperparameter optimization
-2. **XGBoost Regression (Random)** - Random sampling comparison  
+2. **Gradient Boosting Regression (Random)** - Random sampling comparison
 3. **SVM Classification (Pruning)** - Early stopping demonstration
 4. **Multi-objective Optimization** - Accuracy vs Complexity trade-offs
 5. **Logistic Regression** - Simple model baseline
@@ -77,7 +67,7 @@ Perfect standalone example to share with team members!
 
 **Machine Learning Models:**
 - Random Forest (Classification & Regression)
-- XGBoost (Regression)
+- Gradient Boosting (Regression)
 - Support Vector Machine (Classification)
 - Logistic Regression (Classification)
 

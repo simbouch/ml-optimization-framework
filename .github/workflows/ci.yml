@@ -120,23 +120,15 @@ jobs:
 
     - name: Test Python syntax
       run: |
-        python -m py_compile simple_app.py
-        python -m py_compile start_simple.py
-        python -m py_compile quick_demo.py
-        python -m py_compile docker-start.py
-        python -m py_compile validate_clean.py
+        python -m py_compile create_unified_demo.py
 
     - name: Test package imports
       run: |
-        python -c "import streamlit, optuna, pandas, numpy, sklearn, plotly, requests; print('✅ All packages imported successfully')"
+        python -c "import optuna, pandas, numpy, sklearn, plotly; print('✅ All packages imported successfully')"
 
     - name: Test demo study creation
       run: |
-        python quick_demo.py
-
-    - name: Test validation script
-      run: |
-        python validate_clean.py
+        python create_unified_demo.py
 
     - name: Run basic functionality tests
       run: |
@@ -177,12 +169,7 @@ jobs:
 
     - name: Run framework validation
       run: |
-        python validate_clean.py
-
-    - name: Test Streamlit app syntax
-      run: |
-        python -c "import streamlit; print('✅ Streamlit import successful')"
-        streamlit --version
+        python create_unified_demo.py
 
   # Docker Build and Test
   docker-build-test:
@@ -204,7 +191,7 @@ jobs:
     - name: Test Docker image basic functionality
       run: |
         docker run --rm ml-optimization-framework:test python -c "
-        import optuna, streamlit, pandas, numpy, sklearn, plotly, requests
+        import optuna, pandas, numpy, sklearn, plotly
         print('✅ All packages available in Docker image')
         "
 
@@ -218,9 +205,6 @@ jobs:
 
         # Wait for services to be ready
         sleep 45
-
-        # Test Streamlit service
-        curl -f http://localhost:8501 || echo "Streamlit service check failed"
 
         # Test Optuna Dashboard service
         curl -f http://localhost:8080 || echo "Optuna Dashboard service check failed"

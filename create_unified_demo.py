@@ -8,10 +8,9 @@ import optuna
 import numpy as np
 from sklearn.datasets import make_classification, make_regression
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-import xgboost as xgb
 from pathlib import Path
 import time
 
@@ -70,37 +69,37 @@ def create_unified_database():
     studies_created.append("RandomForest_Classification_TPE")
     safe_print(f"   Best accuracy: {study1.best_value:.4f}")
     
-    # 2. XGBoost Regression with Random Sampler
-    safe_print("2. Creating XGBoost Regression (Random)...")
+    # 2. Gradient Boosting Regression with Random Sampler
+    safe_print("2. Creating Gradient Boosting Regression (Random)...")
     study2 = optuna.create_study(
-        study_name="XGBoost_Regression_Random",
+        study_name="GradientBoosting_Regression_Random",
         storage=storage_url,
         direction="minimize",
         sampler=optuna.samplers.RandomSampler(seed=42),
         load_if_exists=True
     )
-    
-    def xgb_regression_objective(trial):
-        n_estimators = trial.suggest_int('n_estimators', 50, 300)
+
+    def gb_regression_objective(trial):
+        n_estimators = trial.suggest_int('n_estimators', 50, 200)
         max_depth = trial.suggest_int('max_depth', 3, 10)
         learning_rate = trial.suggest_float('learning_rate', 0.01, 0.3)
         subsample = trial.suggest_float('subsample', 0.6, 1.0)
-        
-        model = xgb.XGBRegressor(
+
+        model = GradientBoostingRegressor(
             n_estimators=n_estimators,
             max_depth=max_depth,
             learning_rate=learning_rate,
             subsample=subsample,
             random_state=42
         )
-        
+
         model.fit(X_train_r, y_train_r)
         predictions = model.predict(X_test_r)
         mse = np.mean((y_test_r - predictions) ** 2)
         return mse
-    
-    study2.optimize(xgb_regression_objective, n_trials=25)
-    studies_created.append("XGBoost_Regression_Random")
+
+    study2.optimize(gb_regression_objective, n_trials=25)
+    studies_created.append("GradientBoosting_Regression_Random")
     safe_print(f"   Best MSE: {study2.best_value:.4f}")
     
     # 3. SVM Classification with Pruning

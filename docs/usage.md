@@ -67,7 +67,7 @@ Click any study name to explore its optimization results in detail.
 - `max_depth`: Tree depth
 - `min_samples_split`: Minimum samples for splitting
 
-### 2. XGBoost Regression (Random)
+### 2. Gradient Boosting Regression (Random)
 **Purpose**: Show random sampling approach
 **Key insights**:
 - Random exploration across parameter space

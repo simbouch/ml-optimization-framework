@@ -27,7 +27,7 @@ python examples/basic_optimization.py
 
 This demonstrates:
 - Simple classification and regression optimization
-- Algorithm comparison (Random Forest, XGBoost, SVM)
+- Algorithm comparison (Random Forest, Gradient Boosting, SVM)
 - Study management and result analysis
 
 ### Advanced Examples
@@ -56,7 +56,7 @@ cp examples/custom/custom_optimizer_template.py my_optimizer.py
 
 ### 1. Basic Optimization (`basic_optimization.py`)
 - **Classification Example**: Random Forest hyperparameter tuning
-- **Regression Example**: XGBoost optimization for regression
+- **Regression Example**: Gradient Boosting optimization for regression
 - **Algorithm Comparison**: Compare multiple ML algorithms
 - **Study Management**: Create, load, and analyze studies
 
@@ -122,17 +122,12 @@ python examples/custom/custom_optimizer_tutorial.py
 
 ### Viewing Results
 After running examples, view results in:
-- **Streamlit App**: http://localhost:8501
 - **Optuna Dashboard**: http://localhost:8080
 
 ### Study Databases
 Examples create study databases in the `studies/` directory:
-- `basic_classification.db`
-- `basic_regression.db`
-- `multi_objective_advanced.db`
-- `distributed_optimization.db`
-- `custom_neural_network.db`
-- And more...
+- `unified_demo.db` (main demonstration database)
+- Additional databases created by individual examples
 
 ## 💡 Learning Path
 
@@ -200,10 +195,11 @@ if __name__ == "__main__":
 
 ## 📚 Additional Resources
 
-- **[Framework Documentation](../docs/)**: Complete API reference
-- **[Getting Started Guide](../docs/GETTING_STARTED.md)**: Setup instructions
-- **[Advanced Usage](../docs/ADVANCED_USAGE.md)**: Advanced techniques
-- **[API Reference](../docs/API_REFERENCE.md)**: Detailed API documentation
+- **[Framework Documentation](../docs/)**: Complete documentation
+- **[Setup Guide](../docs/setup.md)**: Setup instructions
+- **[Usage Guide](../docs/usage.md)**: Dashboard usage
+- **[Tutorial](../docs/tutorial.md)**: Complete Optuna tutorial
+- **[API Reference](../docs/api.md)**: Detailed API documentation
 
 ## 🤝 Contributing
 
