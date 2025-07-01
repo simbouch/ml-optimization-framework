@@ -50,9 +50,9 @@ USER mlopt
 # Expose ports for Streamlit and Optuna Dashboard
 EXPOSE 8501 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+# Health check for Optuna Dashboard
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:8080 || exit 1
 
-# Default command
-CMD ["python", "docker-start.py"]
+# Default command - run demo and start dashboard
+CMD ["sh", "-c", "python create_unified_demo.py && optuna-dashboard sqlite:///studies/unified_demo.db --host 0.0.0.0 --port 8080"]

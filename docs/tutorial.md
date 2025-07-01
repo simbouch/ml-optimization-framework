@@ -1,15 +1,21 @@
 # 🎯 Complete Optuna Tutorial: From Basics to Advanced
+*The Ultimate Educational Guide for Teaching and Learning Optuna*
 
 ## 📚 Table of Contents
 
 1. [What is Optuna?](#what-is-optuna)
 2. [Why Use Optuna?](#why-use-optuna)
 3. [Core Concepts](#core-concepts)
-4. [Basic Example](#basic-example)
-5. [Advanced Features](#advanced-features)
-6. [Project Demonstrations](#project-demonstrations)
-7. [Hands-on Practice](#hands-on-practice)
-8. [Best Practices](#best-practices)
+4. [Installation & Setup](#installation--setup)
+5. [Basic Example](#basic-example)
+6. [Step-by-Step Learning Path](#step-by-step-learning-path)
+7. [Advanced Features](#advanced-features)
+8. [Project Demonstrations](#project-demonstrations)
+9. [Hands-on Practice Projects](#hands-on-practice-projects)
+10. [Teaching Guide for Instructors](#teaching-guide-for-instructors)
+11. [Best Practices](#best-practices)
+12. [Troubleshooting](#troubleshooting)
+13. [Further Learning](#further-learning)
 
 ## 🤔 What is Optuna?
 
@@ -96,6 +102,39 @@ Algorithms that stop unpromising trials early:
 - **Successive Halving**: Tournament-style elimination
 - **Hyperband**: Advanced bandit-based pruning
 
+## 🛠 Installation & Setup
+
+### Quick Setup for This Project
+If you're using this educational project, everything is already set up! Just run:
+
+```bash
+# Start the interactive dashboard
+docker-compose up -d --build
+
+# Then open: http://localhost:8080
+```
+
+### Manual Installation (For Your Own Projects)
+
+```bash
+# Install Optuna and dependencies
+pip install optuna optuna-dashboard pandas scikit-learn
+
+# Optional: Install additional ML libraries
+pip install xgboost lightgbm tensorflow pytorch
+```
+
+### Verify Installation
+
+```python
+import optuna
+print(f"Optuna version: {optuna.__version__}")
+
+# Test basic functionality
+study = optuna.create_study()
+print("✅ Optuna is working correctly!")
+```
+
 ## 🚀 Basic Example
 
 Let's start with a simple example optimizing a Random Forest classifier:
@@ -143,6 +182,239 @@ print(f"Best parameters: {study.best_params}")
 Best accuracy: 0.8923
 Best parameters: {'n_estimators': 89, 'max_depth': 15}
 ```
+
+## 📈 Step-by-Step Learning Path
+
+### 🎯 **Phase 1: Understanding the Basics (Week 1)**
+
+#### Day 1-2: Core Concepts
+**Goal**: Understand what Optuna does and why it's useful
+
+**Activities**:
+1. **Read the theory**: Study the "What is Optuna?" and "Why Use Optuna?" sections above
+2. **Run the basic example**: Copy and run the Random Forest example
+3. **Experiment**: Change the parameter ranges and see how it affects results
+
+**Exercise**:
+```python
+# Try this modified version with different ranges
+def my_first_objective(trial):
+    # Try wider ranges
+    n_estimators = trial.suggest_int('n_estimators', 5, 200)  # Wider range
+    max_depth = trial.suggest_int('max_depth', 1, 30)        # Deeper trees
+
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        random_state=42
+    )
+
+    scores = cross_val_score(model, X, y, cv=3)
+    return scores.mean()
+
+# Question: How do the results change with wider parameter ranges?
+```
+
+#### Day 3-4: Parameter Types and Search Spaces
+**Goal**: Master different parameter suggestion methods
+
+**Activities**:
+1. **Learn parameter types**: int, float, categorical, log-scale
+2. **Practice with different models**: Try SVM, Gradient Boosting
+3. **Understand search spaces**: When to use log-scale, discrete vs continuous
+
+**Exercise**:
+```python
+def parameter_types_exercise(trial):
+    # Practice all parameter types
+
+    # Integer parameters
+    n_estimators = trial.suggest_int('n_estimators', 10, 100)
+
+    # Float parameters
+    learning_rate = trial.suggest_float('learning_rate', 0.01, 0.3)
+
+    # Categorical parameters
+    criterion = trial.suggest_categorical('criterion', ['gini', 'entropy'])
+
+    # Log-scale parameters (for wide ranges)
+    alpha = trial.suggest_float('alpha', 1e-5, 1e-1, log=True)
+
+    # Your model here...
+    return score
+
+# Question: When should you use log=True for float parameters?
+```
+
+#### Day 5-7: Study Management and Analysis
+**Goal**: Learn to create, save, and analyze studies
+
+**Activities**:
+1. **Study persistence**: Save studies to database
+2. **Result analysis**: Best parameters, trial history
+3. **Visualization**: Basic plots and analysis
+
+**Exercise**:
+```python
+# Create a persistent study
+storage = optuna.storages.RDBStorage('sqlite:///my_learning.db')
+study = optuna.create_study(
+    study_name='my_first_study',
+    storage=storage,
+    direction='maximize',
+    load_if_exists=True
+)
+
+# Run optimization
+study.optimize(objective, n_trials=50)
+
+# Analyze results
+print(f"Best trial: {study.best_trial}")
+print(f"Best parameters: {study.best_params}")
+print(f"Best value: {study.best_value}")
+
+# Get all trials as DataFrame
+df = study.trials_dataframe()
+print(df.head())
+
+# Question: How can you identify which parameters are most important?
+```
+
+### 🎯 **Phase 2: Intermediate Features (Week 2)**
+
+#### Day 8-10: Samplers and Optimization Algorithms
+**Goal**: Understand different optimization strategies
+
+**Activities**:
+1. **Compare samplers**: TPE vs Random vs CMA-ES
+2. **Understand when to use each**: Problem characteristics
+3. **Performance comparison**: Speed vs quality trade-offs
+
+**Exercise**:
+```python
+# Compare different samplers
+samplers = {
+    'TPE': optuna.samplers.TPESampler(seed=42),
+    'Random': optuna.samplers.RandomSampler(seed=42),
+    'CMA-ES': optuna.samplers.CmaEsSampler(seed=42)
+}
+
+results = {}
+for name, sampler in samplers.items():
+    study = optuna.create_study(
+        study_name=f'sampler_comparison_{name}',
+        sampler=sampler,
+        direction='maximize'
+    )
+    study.optimize(objective, n_trials=50)
+    results[name] = study.best_value
+
+# Question: Which sampler performed best? Why might that be?
+```
+
+#### Day 11-13: Pruning and Efficiency
+**Goal**: Learn to stop unpromising trials early
+
+**Activities**:
+1. **Understand pruning**: When and why to use it
+2. **Implement pruning**: MedianPruner, SuccessiveHalving
+3. **Measure efficiency**: Time savings vs result quality
+
+**Exercise**:
+```python
+def pruning_objective(trial):
+    # Simulate a model that trains over multiple epochs
+    n_estimators = trial.suggest_int('n_estimators', 10, 100)
+
+    # Simulate training with intermediate results
+    scores = []
+    for epoch in range(10):  # Simulate 10 training epochs
+        # Simulate improving performance
+        base_score = 0.7 + (epoch * 0.02) + np.random.normal(0, 0.01)
+        scores.append(base_score)
+
+        # Report intermediate value
+        trial.report(base_score, epoch)
+
+        # Check if trial should be pruned
+        if trial.should_prune():
+            raise optuna.TrialPruned()
+
+    return max(scores)
+
+# Study with pruning
+study_with_pruning = optuna.create_study(
+    direction='maximize',
+    pruner=optuna.pruners.MedianPruner(n_startup_trials=5)
+)
+
+# Question: How much time does pruning save compared to no pruning?
+```
+
+#### Day 14: Multi-objective Optimization
+**Goal**: Handle trade-offs between competing objectives
+
+**Activities**:
+1. **Understand Pareto fronts**: No single "best" solution
+2. **Define multiple objectives**: Accuracy vs speed, accuracy vs complexity
+3. **Analyze trade-offs**: Choose solutions based on constraints
+
+**Exercise**:
+```python
+def multi_objective_exercise(trial):
+    n_estimators = trial.suggest_int('n_estimators', 10, 200)
+    max_depth = trial.suggest_int('max_depth', 3, 20)
+
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        random_state=42
+    )
+
+    # Objective 1: Maximize accuracy
+    accuracy = cross_val_score(model, X, y, cv=3).mean()
+
+    # Objective 2: Minimize model complexity (negative for maximization)
+    complexity = -(n_estimators * max_depth)
+
+    return accuracy, complexity
+
+# Multi-objective study
+study = optuna.create_study(directions=['maximize', 'maximize'])
+study.optimize(multi_objective_exercise, n_trials=100)
+
+# Analyze Pareto front
+pareto_front = study.best_trials
+print(f"Found {len(pareto_front)} Pareto optimal solutions")
+
+# Question: How do you choose the final solution from the Pareto front?
+```
+
+### 🎯 **Phase 3: Advanced Applications (Week 3)**
+
+#### Day 15-17: Real-World Integration
+**Goal**: Apply Optuna to complete ML pipelines
+
+**Activities**:
+1. **End-to-end optimization**: Data preprocessing + model tuning
+2. **Pipeline integration**: Feature selection, scaling, model selection
+3. **Production considerations**: Model deployment, monitoring
+
+#### Day 18-19: Custom Samplers and Pruners
+**Goal**: Implement domain-specific optimization strategies
+
+**Activities**:
+1. **Study existing implementations**: How TPE works internally
+2. **Identify opportunities**: Domain-specific knowledge
+3. **Implement custom logic**: Inherit from base classes
+
+#### Day 20-21: Performance and Scaling
+**Goal**: Optimize Optuna itself for large-scale problems
+
+**Activities**:
+1. **Distributed optimization**: Multiple workers, shared storage
+2. **Memory management**: Large studies, efficient storage
+3. **Performance tuning**: Database optimization, caching
 
 ## 🔬 Advanced Features
 
@@ -263,7 +535,169 @@ This project demonstrates all major Optuna features through 6 different studies:
 **Purpose**: Show optimization for different ML tasks
 **Key Learning**: Different metrics require different optimization approaches
 
-## 🛠 Practice Projects for Self-Learning
+## 👨‍🏫 Teaching Guide for Instructors
+
+### 🎯 **How to Use This Project for Teaching**
+
+This section is specifically designed for instructors, team leads, and mentors who want to teach Optuna to their colleagues or students.
+
+#### **Pre-Class Preparation (30 minutes)**
+
+1. **Setup Verification**:
+   ```bash
+   # Ensure the project works
+   docker-compose up -d --build
+   # Verify dashboard at http://localhost:8080
+   ```
+
+2. **Review Key Concepts**:
+   - Familiarize yourself with the 6 demonstration studies
+   - Understand the learning progression from basic to advanced
+   - Prepare answers for common questions (see FAQ below)
+
+3. **Prepare Datasets**:
+   - Have 2-3 datasets ready for hands-on exercises
+   - Include both classification and regression problems
+   - Ensure datasets are small enough for quick optimization (< 5 minutes per study)
+
+#### **Suggested Teaching Schedule**
+
+##### **Session 1: Introduction (2 hours)**
+- **Theory (30 min)**: What is hyperparameter optimization? Why Optuna?
+- **Demo (30 min)**: Show the dashboard, explain the 6 studies
+- **Hands-on (45 min)**: Students run basic example with their own data
+- **Q&A (15 min)**: Address questions and troubleshooting
+
+##### **Session 2: Core Features (2 hours)**
+- **Theory (20 min)**: Samplers, pruners, parameter types
+- **Demo (40 min)**: Live coding different parameter types and samplers
+- **Hands-on (45 min)**: Students implement pruning and compare samplers
+- **Discussion (15 min)**: When to use which features
+
+##### **Session 3: Advanced Topics (2 hours)**
+- **Theory (20 min)**: Multi-objective optimization, production considerations
+- **Demo (30 min)**: Multi-objective example with trade-off analysis
+- **Project Work (60 min)**: Students work on practice projects
+- **Presentations (10 min)**: Students share their results
+
+#### **Interactive Exercises for Class**
+
+##### **Exercise 1: Parameter Range Impact**
+```python
+# Give students this template and ask them to experiment
+def range_experiment(trial):
+    # TODO: Students modify these ranges
+    n_estimators = trial.suggest_int('n_estimators', ?, ?)  # Fill in ranges
+    max_depth = trial.suggest_int('max_depth', ?, ?)
+
+    # Standard model and evaluation
+    model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+    return cross_val_score(model, X, y, cv=3).mean()
+
+# Questions for discussion:
+# 1. What happens with very narrow ranges?
+# 2. What happens with very wide ranges?
+# 3. How does the number of trials affect the results?
+```
+
+##### **Exercise 2: Sampler Comparison Challenge**
+```python
+# Challenge: Which sampler works best for this problem?
+def sampler_challenge():
+    # Students implement this and compare results
+    samplers_to_test = ['TPE', 'Random', 'CMA-ES']
+
+    # TODO: Students implement comparison
+    # Hint: Use the same objective function for fair comparison
+
+    return results
+
+# Discussion points:
+# - Why might different samplers perform differently?
+# - When would you choose each sampler?
+# - How does problem dimensionality affect sampler choice?
+```
+
+##### **Exercise 3: Real-World Problem Solving**
+```python
+# Give students a realistic scenario
+"""
+Scenario: You're optimizing a model for production deployment.
+Constraints:
+- Prediction time must be < 100ms
+- Model size must be < 50MB
+- Accuracy should be maximized
+
+Task: Design a multi-objective optimization that handles these constraints.
+"""
+
+def production_optimization(trial):
+    # Students implement this considering real constraints
+    pass
+```
+
+#### **Common Student Questions & Answers**
+
+**Q: "How many trials should I run?"**
+A: Start with 50-100 trials for learning. In production, it depends on:
+- Problem complexity (more parameters = more trials)
+- Available time/budget
+- Diminishing returns (plot optimization history to see)
+
+**Q: "Why is TPE better than random search?"**
+A: Show them the optimization history plots! TPE learns from previous trials and focuses on promising regions. Random search explores uniformly.
+
+**Q: "When should I use pruning?"**
+A: When:
+- Training is expensive (deep learning, large datasets)
+- You can evaluate intermediate performance
+- You have many trials to run
+
+**Q: "How do I choose between multiple Pareto optimal solutions?"**
+A: Consider:
+- Business constraints (budget, time, resources)
+- Risk tolerance
+- Future requirements and scalability
+
+#### **Assessment Ideas**
+
+##### **Beginner Assessment**
+- Implement basic optimization for a given dataset
+- Explain the difference between TPE and random sampling
+- Interpret optimization history plots
+
+##### **Intermediate Assessment**
+- Implement multi-objective optimization with real trade-offs
+- Add pruning to reduce computation time
+- Compare different samplers and explain results
+
+##### **Advanced Assessment**
+- Design optimization for a complete ML pipeline
+- Implement custom objective function with domain constraints
+- Present optimization strategy for a production system
+
+#### **Troubleshooting Guide for Instructors**
+
+**Common Issues**:
+1. **Docker not starting**: Check port 8080 availability
+2. **Slow optimization**: Reduce dataset size or trial count
+3. **Import errors**: Verify virtual environment activation
+4. **Database locked**: Restart Docker containers
+
+**Quick Fixes**:
+```bash
+# Reset everything
+docker-compose down
+docker-compose up -d --build
+
+# Check logs
+docker-compose logs
+
+# Access container for debugging
+docker exec -it ml-optimization-framework bash
+```
+
+### 🛠 Practice Projects for Self-Learning
 
 After exploring this framework, here are **practice projects** you should implement yourself to master Optuna:
 
@@ -487,17 +921,280 @@ optuna.visualization.plot_optimization_history(study)
 3. **Hyperparameter Importance**: Analyze which parameters matter most
 4. **Production Integration**: Deploy optimized models in production
 
+## 🔧 Troubleshooting
+
+### Common Issues and Solutions
+
+#### **Installation Problems**
+
+**Issue**: `ModuleNotFoundError: No module named 'optuna'`
+```bash
+# Solution: Install in correct environment
+pip install optuna optuna-dashboard
+
+# Or if using conda:
+conda install -c conda-forge optuna
+```
+
+**Issue**: Docker container won't start
+```bash
+# Check if port 8080 is already in use
+netstat -an | grep 8080
+
+# Stop conflicting services
+docker-compose down
+docker system prune -f
+
+# Restart
+docker-compose up -d --build
+```
+
+#### **Optimization Problems**
+
+**Issue**: Optimization is very slow
+```python
+# Solutions:
+# 1. Reduce dataset size for learning
+X_small, _, y_small, _ = train_test_split(X, y, train_size=0.1)
+
+# 2. Reduce cross-validation folds
+scores = cross_val_score(model, X, y, cv=3)  # Instead of cv=5
+
+# 3. Use fewer trials for testing
+study.optimize(objective, n_trials=20)  # Instead of 100
+```
+
+**Issue**: Study database is locked
+```python
+# Solution: Use different database or restart
+storage = f"sqlite:///studies/my_study_{int(time.time())}.db"
+```
+
+**Issue**: Memory errors with large studies
+```python
+# Solution: Enable garbage collection
+study.optimize(objective, n_trials=100, gc_after_trial=True)
+```
+
+#### **Dashboard Issues**
+
+**Issue**: Dashboard shows no data
+```bash
+# Check if studies exist
+ls -la studies/
+
+# Verify database content
+sqlite3 studies/unified_demo.db ".tables"
+
+# Restart dashboard
+docker-compose restart
+```
+
+**Issue**: Plots not loading
+- Clear browser cache
+- Try different browser
+- Check browser console for JavaScript errors
+
+#### **Code Issues**
+
+**Issue**: `TrialPruned` exception not handled
+```python
+# Correct way to handle pruning
+def objective_with_pruning(trial):
+    try:
+        # Your optimization code
+        for epoch in range(100):
+            score = train_epoch()
+            trial.report(score, epoch)
+
+            if trial.should_prune():
+                raise optuna.TrialPruned()
+
+        return final_score
+    except optuna.TrialPruned:
+        # This is expected behavior, not an error
+        raise
+```
+
+**Issue**: Inconsistent results across runs
+```python
+# Solution: Set random seeds
+study = optuna.create_study(
+    sampler=optuna.samplers.TPESampler(seed=42)
+)
+
+# Also set seeds in your ML models
+RandomForestClassifier(random_state=42)
+```
+
+### Performance Optimization Tips
+
+#### **Speed Up Optimization**
+1. **Use pruning** for expensive models
+2. **Reduce dataset size** during hyperparameter search
+3. **Use fewer CV folds** (3 instead of 5)
+4. **Parallel optimization** with `n_jobs=-1`
+5. **Smart parameter ranges** (avoid unnecessarily wide ranges)
+
+#### **Improve Results Quality**
+1. **More trials** for complex problems
+2. **Better evaluation** with stratified CV
+3. **Appropriate samplers** (TPE for most cases)
+4. **Domain knowledge** in parameter ranges
+
+## 📚 Further Learning
+
+### 🎓 **Next Steps After This Tutorial**
+
+#### **Beginner → Intermediate**
+1. **Apply to your own data**: Use your work datasets
+2. **Try different models**: Neural networks, ensemble methods
+3. **Learn visualization**: Optuna's plotting functions
+4. **Read documentation**: Official Optuna docs
+
+#### **Intermediate → Advanced**
+1. **Distributed optimization**: Multiple machines/GPUs
+2. **Custom samplers**: Domain-specific optimization
+3. **Production deployment**: MLOps integration
+4. **Research papers**: Latest optimization algorithms
+
+#### **Advanced → Expert**
+1. **Contribute to Optuna**: Open source contributions
+2. **Teach others**: Share knowledge with community
+3. **Research**: Novel optimization approaches
+4. **Consulting**: Help organizations optimize ML
+
+### 📖 **Recommended Resources**
+
+#### **Official Documentation**
+- [Optuna Documentation](https://optuna.readthedocs.io/)
+- [Optuna Examples](https://github.com/optuna/optuna-examples)
+- [Optuna Dashboard](https://optuna-dashboard.readthedocs.io/)
+
+#### **Academic Papers**
+- [Optuna: A Next-generation Hyperparameter Optimization Framework](https://arxiv.org/abs/1907.10902)
+- [Tree-structured Parzen Estimator](https://papers.nips.cc/paper/4443-algorithms-for-hyper-parameter-optimization.pdf)
+- [Hyperband: A Novel Bandit-Based Approach](https://arxiv.org/abs/1603.06560)
+
+#### **Books and Courses**
+- "Automated Machine Learning" by Frank Hutter et al.
+- "Hands-On Machine Learning" by Aurélien Géron (Chapter on hyperparameter tuning)
+- Coursera: "Machine Learning Engineering for Production"
+
+#### **Community and Support**
+- [Optuna GitHub Discussions](https://github.com/optuna/optuna/discussions)
+- [Stack Overflow: optuna tag](https://stackoverflow.com/questions/tagged/optuna)
+- [Reddit: r/MachineLearning](https://reddit.com/r/MachineLearning)
+
+### 🚀 **Advanced Topics to Explore**
+
+#### **1. Neural Architecture Search (NAS)**
+```python
+# Use Optuna to optimize neural network architectures
+def nas_objective(trial):
+    n_layers = trial.suggest_int('n_layers', 1, 5)
+    layers = []
+
+    for i in range(n_layers):
+        n_units = trial.suggest_int(f'n_units_l{i}', 32, 512)
+        activation = trial.suggest_categorical(f'activation_l{i}', ['relu', 'tanh'])
+        layers.append((n_units, activation))
+
+    # Build and train neural network
+    model = build_network(layers)
+    return evaluate_network(model)
+```
+
+#### **2. AutoML Pipelines**
+```python
+# Optimize entire ML pipelines
+def automl_objective(trial):
+    # Feature preprocessing
+    scaler = trial.suggest_categorical('scaler', ['standard', 'minmax', 'robust'])
+
+    # Feature selection
+    k_features = trial.suggest_int('k_features', 5, 50)
+
+    # Model selection
+    model_name = trial.suggest_categorical('model', ['rf', 'svm', 'gb'])
+
+    # Build pipeline
+    pipeline = create_pipeline(scaler, k_features, model_name, trial)
+    return evaluate_pipeline(pipeline)
+```
+
+#### **3. Multi-Fidelity Optimization**
+```python
+# Use different dataset sizes or training epochs as fidelity
+def multifidelity_objective(trial):
+    # Suggest fidelity (dataset size)
+    fidelity = trial.suggest_categorical('fidelity', [0.1, 0.3, 0.5, 1.0])
+
+    # Use subset of data based on fidelity
+    n_samples = int(len(X) * fidelity)
+    X_subset, y_subset = X[:n_samples], y[:n_samples]
+
+    # Your optimization code
+    return score
+```
+
+#### **4. Bayesian Optimization Theory**
+- Understand acquisition functions (EI, UCB, PI)
+- Learn about Gaussian Processes
+- Study bandit algorithms for pruning
+
+### 🎯 **Career Applications**
+
+#### **Data Scientist**
+- Automate model selection and tuning
+- Improve model performance systematically
+- Reduce time spent on manual hyperparameter tuning
+
+#### **ML Engineer**
+- Integrate optimization into ML pipelines
+- Optimize production model performance
+- Implement automated retraining systems
+
+#### **Research Scientist**
+- Design novel optimization algorithms
+- Apply to cutting-edge ML problems
+- Publish optimization research
+
+#### **Consultant**
+- Help organizations improve ML performance
+- Design optimization strategies for specific domains
+- Train teams on best practices
+
 ## 🎉 Conclusion
 
-Optuna transforms hyperparameter optimization from a tedious manual process into an intelligent, automated system. This project demonstrates:
+Optuna transforms hyperparameter optimization from a tedious manual process into an intelligent, automated system. This comprehensive tutorial and project demonstrates:
 
-- **All Major Features**: From basic optimization to advanced multi-objective
-- **Real Examples**: Practical ML scenarios with actual models
+- **Complete Learning Path**: From absolute beginner to advanced practitioner
+- **All Major Features**: Basic optimization to advanced multi-objective scenarios
+- **Real Examples**: Practical ML scenarios with actual models and datasets
+- **Teaching Resources**: Complete guide for instructors and team leads
 - **Best Practices**: Professional patterns for production use
-- **Educational Value**: Progressive learning from simple to complex
+- **Educational Value**: Progressive learning with hands-on exercises
 
-**Ready to optimize? Start with the basic example and work your way up!**
+### 🚀 **Your Next Actions**
+
+1. **Start Simple**: Run the basic example with your own dataset
+2. **Follow the Path**: Complete the 3-week learning progression
+3. **Practice Projects**: Implement the 6 suggested practice projects
+4. **Teach Others**: Share your knowledge with colleagues
+5. **Keep Learning**: Explore advanced topics and contribute to the community
+
+**Ready to optimize? Start with `docker-compose up -d --build` and begin your Optuna journey!**
 
 ---
 
 *This tutorial is part of the ML Optimization Framework project. For hands-on practice, run the project and explore the interactive dashboard at http://localhost:8080*
+
+### 📞 **Getting Help**
+
+- **Project Issues**: Check the troubleshooting section above
+- **Optuna Questions**: Visit [Optuna GitHub Discussions](https://github.com/optuna/optuna/discussions)
+- **General ML Help**: Stack Overflow with appropriate tags
+- **Community**: Join ML communities on Reddit, Discord, or Slack
+
+**Happy Optimizing! 🎯**

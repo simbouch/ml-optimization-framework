@@ -99,13 +99,32 @@ docker-compose down
 
 ## 📚 Documentation & Learning
 
-### 🎯 **Start Here: Complete Optuna Tutorial**
+### 🎯 **Start Here: Complete Learning Resources**
 - **[📖 Optuna Tutorial](docs/tutorial.md)** - **Complete guide from basics to advanced**
   - What is Optuna and why use it?
-  - Core concepts and terminology
-  - Step-by-step examples
-  - Hands-on exercises for colleagues
-  - Real-world practice examples
+  - Core concepts and step-by-step learning path
+  - Advanced features and real-world applications
+  - Comprehensive troubleshooting guide
+
+### 🎓 **For Students & Self-Learners**
+- **[🚀 Quick Start Projects](docs/quick_start_projects.md)** - **5 essential projects (6-8 hours total)**
+  - Get hands-on experience fast
+  - Each project takes 1-2 hours
+  - Covers all major Optuna features
+  - Perfect for weekend learning
+
+- **[🛠 Complete Practice Projects](docs/practice_projects.md)** - **6 comprehensive projects for mastery**
+  - Progressive difficulty from beginner to expert
+  - Real-world scenarios and constraints
+  - Step-by-step implementation guides
+  - Success criteria and extension ideas
+
+### 👨‍🏫 **For Instructors & Team Leads**
+- **[🎯 Teaching Guide](docs/teaching_guide.md)** - **Complete instructor's manual**
+  - Pre-class preparation and setup
+  - Multiple teaching schedule options
+  - Interactive exercises and assessments
+  - Troubleshooting and FAQ sections
 
 ### 📋 **Project Documentation**
 - **[Setup Guide](docs/setup.md)** - Installation and configuration
