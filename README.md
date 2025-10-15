@@ -1,175 +1,153 @@
-# 🎯 ML Optimization Framework with Optuna
+# ML Optimization Framework with Optuna
 
-**Educational project demonstrating Optuna's hyperparameter optimization capabilities through interactive examples and comprehensive tutorials**
+A professional machine learning hyperparameter optimization framework built with Optuna, demonstrating optimization techniques including multi-objective optimization, pruning strategies, and sampler comparison.
 
-## 🎓 **Educational Purpose**
+## Overview
 
-This project is designed to **teach Optuna** - the automatic hyperparameter optimization framework. Perfect for:
-- **Learning Optuna**: From basics to advanced features
-- **Team Training**: Share with colleagues to learn optimization
-- **Demonstrations**: Show Optuna's capabilities in action
-- **Practice**: Hands-on exercises and real examples
+This framework provides a complete solution for hyperparameter optimization in machine learning projects:
 
-### 🎯 **What Your Colleagues Will Learn**
-- **Core Concepts**: Studies, trials, samplers, pruners
-- **Practical Skills**: Writing objective functions, parameter tuning
-- **Advanced Features**: Multi-objective optimization, pruning, visualization
-- **Best Practices**: Cross-validation, parameter importance, production tips
-- **Real Examples**: Complete working code they can modify and use
+- 6 optimization studies covering different ML algorithms
+- Interactive Optuna dashboard for real-time visualization
+- Production-ready modular architecture
+- Comprehensive test suite
+- French tutorial materials for teaching
 
-## 🚀 Quick Start
+## Quick Start
 
-### **Start Interactive Dashboard**
-```bash
-docker-compose up -d --build
-```
-**Then open:** http://localhost:8080
-
-### **What You'll See**
-- **6 Different Studies** showcasing various Optuna techniques
-- **Interactive Visualizations** for understanding optimization
-- **Real ML Examples** with actual models and datasets
-- **Educational Content** perfect for learning and teaching
-
-## 📊 What You'll See
-
-**6 Different Optimization Studies:**
-1. **RandomForest Classification (TPE)** - Smart hyperparameter optimization
-2. **Gradient Boosting Regression (Random)** - Random sampling comparison
-3. **SVM Classification (Pruning)** - Early stopping demonstration
-4. **Multi-objective Optimization** - Accuracy vs Complexity trade-offs
-5. **Logistic Regression** - Simple model baseline
-6. **RandomForest Regression** - Regression task optimization
-
-**Interactive Dashboard Features:**
-- 📈 Optimization history plots
-- 🎯 Parameter importance analysis
-- 📊 Parallel coordinate plots
-- 🔍 Trial details and comparisons
-- 📋 Pareto front visualization (multi-objective)
-
-## 🌟 About Optuna
-
-**Optuna** is an automatic hyperparameter optimization framework for machine learning. This project demonstrates:
-
-- **TPE Sampling**: Tree-structured Parzen Estimator for intelligent optimization
-- **Pruning**: Early stopping of unpromising trials
-- **Multi-objective**: Pareto frontier optimization
-- **Visualization**: Rich interactive dashboards
-
-## 🔧 Technical Details
-
-**Optimization Techniques:**
-- TPE (Tree-structured Parzen Estimator) sampling
-- Random sampling for comparison
-- Median pruning for early stopping
-- Multi-objective optimization with Pareto fronts
-
-**Machine Learning Models:**
-- Random Forest (Classification & Regression)
-- Gradient Boosting (Regression)
-- Support Vector Machine (Classification)
-- Logistic Regression (Classification)
-
-**Infrastructure:**
-- Docker containerization
-- SQLite database storage
-- Optuna dashboard visualization
-- Automated demo execution
-
-## 📋 Requirements
+### Prerequisites
 
 - Docker and Docker Compose
-- 2-3 minutes for initial setup
+- Python 3.9+ (for local development)
 
-## 🎯 Usage
+### Launch the Project
 
-### Start the Framework
 ```bash
+# Start the optimization framework
 docker-compose up -d --build
+
+# Check status
+docker-compose ps
+
+# Access the Optuna Dashboard
+# http://localhost:8080
 ```
 
-### Access Dashboard
-Open http://localhost:8080 in your browser
+## Optimization Studies
 
-### Stop the Framework
+The framework includes 6 pre-configured optimization studies:
+
+1. **Random Forest Classifier** - Iris dataset, 100 trials, TPE sampler
+2. **Gradient Boosting Regressor** - California Housing dataset, 100 trials
+3. **SVM with Pruning** - Digits dataset, 50 trials with MedianPruner
+4. **Neural Network (MLP)** - Wine dataset, 75 trials
+5. **Multi-Objective Optimization** - Breast Cancer dataset, accuracy vs model size
+6. **Sampler Comparison** - Comparing TPE, Random, Grid, and CMA-ES samplers
+
+## Project Structure
+
+```
+optimization_with_optuna/
+├── src/                          # Source code
+│   ├── config.py                 # Configuration management
+│   ├── optimizers.py             # ML model optimizers
+│   └── study_manager.py          # Optuna study management
+├── examples/                     # Example scripts
+│   ├── basic_optimization.py
+│   ├── advanced/
+│   └── custom/
+├── tests/                        # Test suite
+├── studies/                      # SQLite database
+├── tutorial_octobre_2025_french/ # French tutorial materials
+├── docker-compose.yml
+├── Dockerfile
+└── requirements-minimal.txt
+```
+
+## French Tutorial Materials
+
+Complete tutorial materials in French are available in `tutorial_octobre_2025_french/`:
+
+- **PRESENTATION_OPTUNA.md** - Introduction to Optuna framework
+- **PROJET_PRATIQUE.md** - Hands-on project (house price prediction)
+- **projet_prix_maisons.py** - Executable Python project
+- **EXERCICES_PRATIQUES.md** - Progressive exercises
+- **GUIDE_ENSEIGNANT.md** - Teaching guide
+- **GUIDE_GRAPHIQUES.md** - Dashboard visualization guide
+
+These materials are designed for teaching Optuna to colleagues and students.
+
+## Development
+
+### Local Setup
+
 ```bash
+# Install dependencies
+pip install -r requirements-minimal.txt
+
+# Run tests
+pytest tests/
+
+# Create optimization studies
+python create_unified_demo.py
+```
+
+### Docker Commands
+
+```bash
+# Build and start
+docker-compose up -d --build
+
+# View logs
+docker logs ml-optimization-framework
+
+# Stop services
 docker-compose down
+
+# Restart
+docker-compose restart
 ```
 
-## 📚 Documentation & Learning
+## Dashboard Features
 
-### 🎯 **Start Here: Complete Learning Resources**
-- **[📖 Optuna Tutorial](docs/tutorial.md)** - **Complete guide from basics to advanced**
-  - What is Optuna and why use it?
-  - Core concepts and step-by-step learning path
-  - Advanced features and real-world applications
-  - Comprehensive troubleshooting guide
+The Optuna dashboard provides visualization tools:
 
-### 🎓 **For Students & Self-Learners**
-- **[🚀 Quick Start Projects](docs/quick_start_projects.md)** - **5 essential projects (6-8 hours total)**
-  - Get hands-on experience fast
-  - Each project takes 1-2 hours
-  - Covers all major Optuna features
-  - Perfect for weekend learning
+- Optimization History
+- Parameter Importance
+- Parallel Coordinate Plot
+- Contour Plot
+- Slice Plot
+- EDF Plot
+- Timeline
+- Pareto Front (multi-objective)
 
-- **[🛠 Complete Practice Projects](docs/practice_projects.md)** - **6 comprehensive projects for mastery**
-  - Progressive difficulty from beginner to expert
-  - Real-world scenarios and constraints
-  - Step-by-step implementation guides
-  - Success criteria and extension ideas
+## Testing
 
-### 👨‍🏫 **For Instructors & Team Leads**
-- **[🎯 Teaching Guide](docs/teaching_guide.md)** - **Complete instructor's manual**
-  - Pre-class preparation and setup
-  - Multiple teaching schedule options
-  - Interactive exercises and assessments
-  - Troubleshooting and FAQ sections
+```bash
+# Run all tests
+pytest tests/
 
-### 📋 **Project Documentation**
-- **[Setup Guide](docs/setup.md)** - Installation and configuration
-- **[User Guide](docs/usage.md)** - How to use the dashboard
-- **[Study Details](docs/studies.md)** - Explanation of each optimization study
-- **[API Reference](docs/api.md)** - Technical implementation details
+# Run specific test
+pytest tests/test_optimizers.py
 
-## 🏗️ Project Structure
-
-```
-ml-optimization-framework/
-├── create_unified_demo.py    # Creates 6 optimization studies
-├── docker-compose.yml        # Docker deployment configuration
-├── Dockerfile               # Container definition
-├── requirements-minimal.txt  # Python dependencies
-├── src/                     # Framework source code
-├── examples/                # Example optimization scripts
-├── docs/                    # Detailed documentation
-└── studies/                 # Generated study databases
+# Run with coverage
+pytest --cov=src tests/
 ```
 
-## 🎓 Learning Objectives
+## Technologies
 
-This framework demonstrates:
-- **TPE vs Random Sampling**: Compare intelligent vs random optimization
-- **Pruning Benefits**: Early stopping for computational efficiency  
-- **Multi-objective Trade-offs**: Accuracy vs model complexity
-- **Real ML Scenarios**: Practical hyperparameter optimization
-- **Optuna Best Practices**: Professional optimization workflows
+- **Optuna** - Hyperparameter optimization framework
+- **Scikit-learn** - Machine learning algorithms
+- **Docker** - Containerization
+- **SQLite** - Study persistence
+- **Pytest** - Testing framework
 
-## 🔧 Troubleshooting
+## License
 
-**Dashboard not loading?**
-- Wait 2-3 minutes for demos to complete
-- Check container status: `docker-compose ps`
-- View logs: `docker-compose logs`
+MIT License - See LICENSE file for details
 
-**Port already in use?**
-- Stop existing containers: `docker-compose down`
-- Check what's using port 8080: `netstat -an | grep 8080`
+## Resources
 
-## 📝 License
+- Optuna Documentation: https://optuna.readthedocs.io
+- GitHub Repository: https://github.com/optuna/optuna
+- French Tutorial: `tutorial_octobre_2025_french/`
 
-MIT License - See [LICENSE](LICENSE) file for details.
-
----
-
-**🎯 Ready to explore Optuna optimization? Start with `docker-compose up -d --build`**
