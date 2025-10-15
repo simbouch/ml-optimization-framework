@@ -6,9 +6,9 @@ A comprehensive, production-ready ML optimization framework featuring:
 - Multiple optimization strategies and samplers
 - Real-world ML use cases
 - Professional logging with loguru
-- Streamlit dashboard integration
+- Optuna dashboard integration
 """
 
 __version__ = "1.0.0"
 __author__ = "ML Optimization Framework Team"
-__description__ = "Production-ready ML optimization framework with Optuna and Streamlit"
+__description__ = "Production-ready ML optimization framework with Optuna"

@@ -266,9 +266,9 @@ def main():
         print("\n✅ All examples completed successfully!")
         print("\n📚 Next Steps:")
         print("  1. Try the advanced examples in examples/advanced_optimization.py")
-        print("  2. Explore the Streamlit app: streamlit run simple_app.py")
-        print("  3. Check the Optuna dashboard: python quick_demo.py && optuna-dashboard sqlite:///studies/*.db")
-        print("  4. Read the documentation in docs/")
+        print("  2. Check the Optuna dashboard: http://localhost:8080")
+        print("  3. Explore the French tutorial materials in tutorial_octobre_2025_french/")
+        print("  4. Run the unified demo: python create_unified_demo.py")
         
     except Exception as e:
         print(f"\n❌ Error running examples: {e}")

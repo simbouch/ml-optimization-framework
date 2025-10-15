@@ -195,11 +195,10 @@ if __name__ == "__main__":
 
 ## 📚 Additional Resources
 
-- **[Framework Documentation](../docs/)**: Complete documentation
-- **[Setup Guide](../docs/setup.md)**: Setup instructions
-- **[Usage Guide](../docs/usage.md)**: Dashboard usage
-- **[Tutorial](../docs/tutorial.md)**: Complete Optuna tutorial
-- **[API Reference](../docs/api.md)**: Detailed API documentation
+- **[Main README](../README.md)**: Project overview and quick start
+- **[French Tutorial](../tutorial_octobre_2025_french/)**: Complete French tutorial materials
+- **[Optuna Documentation](https://optuna.readthedocs.io)**: Official Optuna documentation
+- **[Scikit-learn Documentation](https://scikit-learn.org)**: ML algorithms documentation
 
 ## 🤝 Contributing
 

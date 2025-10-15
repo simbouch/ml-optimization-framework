@@ -267,8 +267,8 @@ def main():
         print("  3. performance_cost_tradeoff.db - Performance vs cost trade-off")
         
         print("\n📍 View Results:")
-        print("  🎨 Streamlit App: http://localhost:8501")
         print("  📊 Optuna Dashboard: http://localhost:8080")
+        print("  📚 French Tutorial: tutorial_octobre_2025_french/")
         
         print("\n💡 Key Learnings:")
         print("  - Multi-objective optimization finds trade-off solutions")
