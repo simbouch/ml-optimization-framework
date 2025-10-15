@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 # Set metadata
 LABEL maintainer="ML Optimization Framework Team"
-LABEL description="Production-ready ML optimization framework with Optuna and Streamlit"
+LABEL description="Production-ready ML optimization framework with Optuna"
 LABEL version="1.0.0"
 LABEL org.opencontainers.image.source="https://github.com/simbouch/ml-optimization-framework"
 
@@ -47,8 +47,8 @@ RUN useradd --create-home --shell /bin/bash mlopt && \
 # Switch to non-root user
 USER mlopt
 
-# Expose ports for Streamlit and Optuna Dashboard
-EXPOSE 8501 8080
+# Expose port for Optuna Dashboard
+EXPOSE 8080
 
 # Health check for Optuna Dashboard
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \

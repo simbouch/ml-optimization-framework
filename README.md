@@ -68,11 +68,10 @@ optimization_with_optuna/
 Complete tutorial materials in French are available in `tutorial_octobre_2025_french/`:
 
 - **PRESENTATION_OPTUNA.md** - Introduction to Optuna framework
-- **PROJET_PRATIQUE.md** - Hands-on project (house price prediction)
-- **projet_prix_maisons.py** - Executable Python project
-- **EXERCICES_PRATIQUES.md** - Progressive exercises
-- **GUIDE_ENSEIGNANT.md** - Teaching guide
+- **PRESENTATION_PROJET.md** - Presentation of this project
 - **GUIDE_GRAPHIQUES.md** - Dashboard visualization guide
+- **EXERCICE_PRATIQUE.md** - Guided hands-on exercise
+- **COMMANDES.md** - Essential commands
 
 These materials are designed for teaching Optuna to colleagues and students.
 
