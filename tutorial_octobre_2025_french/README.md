@@ -1,37 +1,40 @@
-# Tutorial Optuna - Documentation Française
+# Formation Optuna - Simplon
 
-Documentation complète en français pour apprendre et enseigner Optuna.
+Salut l'équipe ! 👋
 
-## Contenu
+J'ai préparé cette documentation pour vous expliquer Optuna et vous montrer comment optimiser vos modèles ML automatiquement. C'est un outil vraiment puissant que j'utilise dans mes projets et je voulais vous le partager.
 
-Ce dossier contient la documentation essentielle pour comprendre et utiliser Optuna :
+## Ce que vous allez trouver ici
 
-1. **PRESENTATION_OPTUNA.md** - Introduction au framework Optuna
-2. **PRESENTATION_PROJET.md** - Présentation de ce projet d'optimisation
-3. **GUIDE_GRAPHIQUES.md** - Explication des graphiques du dashboard
-4. **EXERCICE_PRATIQUE.md** - Exercice guidé pour créer un projet Optuna
-5. **COMMANDES.md** - Commandes pour démarrer et utiliser le projet
+J'ai organisé tout ça en 5 fichiers pour que ce soit facile à suivre :
 
-## Démarrage Rapide
+1. **PRESENTATION_OPTUNA.md** - Je vous explique ce que c'est Optuna et pourquoi c'est génial
+2. **PRESENTATION_PROJET.md** - Je vous présente le projet que j'ai fait pour la démo
+3. **GUIDE_GRAPHIQUES.md** - Comment lire tous les graphiques du dashboard (super important !)
+4. **EXERCICE_PRATIQUE.md** - Un petit exercice pour que vous puissiez pratiquer
+5. **COMMANDES.md** - Toutes les commandes dont vous avez besoin
+
+## Pour commencer rapidement
+
+Si vous voulez juste voir le truc tourner :
 
 ```bash
-# Démarrer le projet
+# Lancez ça et attendez 2-3 minutes
 docker-compose up -d --build
 
-# Accéder au dashboard
-# http://localhost:8080
+# Puis allez sur http://localhost:8080
 ```
 
-## Parcours d'Apprentissage
+## Comment je vous conseille de faire
 
-1. Lisez **PRESENTATION_OPTUNA.md** pour comprendre Optuna
-2. Lisez **PRESENTATION_PROJET.md** pour comprendre ce projet
-3. Consultez **COMMANDES.md** pour démarrer le projet
-4. Explorez le dashboard et consultez **GUIDE_GRAPHIQUES.md**
-5. Réalisez **EXERCICE_PRATIQUE.md** pour pratiquer
+1. Commencez par lire **PRESENTATION_OPTUNA.md** - ça va vous donner les bases
+2. Jetez un œil à **PRESENTATION_PROJET.md** pour comprendre ce que j'ai fait
+3. Utilisez **COMMANDES.md** pour lancer le projet
+4. Explorez le dashboard avec **GUIDE_GRAPHIQUES.md** sous les yeux
+5. Faites l'exercice dans **EXERCICE_PRATIQUE.md** quand vous vous sentez prêts
 
-## Ressources
+## Liens utiles
 
-- Documentation Optuna : https://optuna.readthedocs.io
-- GitHub Optuna : https://github.com/optuna/optuna
+- Doc officielle Optuna : https://optuna.readthedocs.io
+- Code source Optuna : https://github.com/optuna/optuna
 

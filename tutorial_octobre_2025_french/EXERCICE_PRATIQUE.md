@@ -1,41 +1,43 @@
-# Exercice Pratique : Créer Votre Premier Projet Optuna
+# Exercice : Créez votre premier projet Optuna
 
-Cet exercice vous guide pas à pas pour créer un projet d'optimisation d'hyperparamètres avec Optuna.
+Allez, on va faire un petit exercice ensemble ! L'idée c'est que vous créiez votre propre projet Optuna de A à Z.
 
-## Objectif
+## Ce qu'on va faire
 
-Créer un projet complet d'optimisation pour un modèle de classification, en utilisant Optuna pour trouver les meilleurs hyperparamètres.
+On va créer un projet d'optimisation pour classifier des données de cancer du sein. Optuna va trouver les meilleurs paramètres pour notre Random Forest.
 
-## Durée Estimée
+## Combien de temps ça prend
 
-2-3 heures
+Comptez 2-3 heures si vous prenez votre temps. Mais vous pouvez faire ça en plusieurs fois.
 
-## Prérequis
+## Ce qu'il vous faut
 
-- Python 3.9+ installé
-- Connaissances de base en machine learning
-- Compréhension des concepts Optuna (voir PRESENTATION_OPTUNA.md)
+- Python 3.9+ (j'espère que vous l'avez déjà)
+- Avoir lu la présentation Optuna avant
+- Un peu de patience
 
-## Étape 1 : Préparation de l'Environnement
+## Étape 1 : On prépare l'environnement
 
-### 1.1 Créer un dossier pour le projet
+### Créer le dossier
 
 ```powershell
-# Créer un nouveau dossier
 mkdir mon_projet_optuna
 cd mon_projet_optuna
 ```
 
-### 1.2 Installer les dépendances
+### Installer ce qu'il faut
 
 ```powershell
-# Installer les bibliothèques nécessaires
 pip install optuna scikit-learn pandas numpy matplotlib
 ```
 
-## Étape 2 : Préparer les Données
+Ça va installer Optuna et tout ce qu'il faut pour faire du ML.
 
-### 2.1 Créer le fichier `prepare_data.py`
+## Étape 2 : On prépare les données
+
+### Créer le fichier `prepare_data.py`
+
+Créez ce fichier et copiez-collez ça dedans :
 
 ```python
 from sklearn.datasets import load_breast_cancer
@@ -43,17 +45,17 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 def load_data():
-    """Charger et préparer les données"""
-    # Charger le dataset Breast Cancer
+    """Charger les données de cancer du sein"""
+    # On charge le dataset (c'est inclus dans scikit-learn)
     data = load_breast_cancer()
     X = pd.DataFrame(data.data, columns=data.feature_names)
     y = pd.Series(data.target, name='target')
-    
-    # Diviser en ensembles d'entraînement et de test
+
+    # On divise en train/test
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
-    
+
     return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
@@ -62,17 +64,19 @@ if __name__ == "__main__":
     print(f"Données de test : {X_test.shape}")
 ```
 
-### 2.2 Tester le chargement des données
+### Tester que ça marche
 
 ```powershell
 python prepare_data.py
 ```
 
-**Résultat attendu :**
+Vous devriez voir :
 ```
 Données d'entraînement : (455, 30)
 Données de test : (114, 30)
 ```
+
+Si ça marche, on continue !
 
 ## Étape 3 : Créer la Fonction Objectif
 

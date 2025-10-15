@@ -1,61 +1,58 @@
-# 📊 Guide Complet des Graphiques Optuna Dashboard
+# Comment lire les graphiques du dashboard Optuna
 
-**Comprendre et interpréter tous les graphiques du dashboard Optuna**
+Bon, le dashboard Optuna c'est super beau, mais au début on comprend rien. Je vais vous expliquer chaque graphique et surtout **comment les interpréter** pour prendre de bonnes décisions.
 
----
+## Les graphiques qu'on va voir
 
-## 🎯 Introduction
+Il y a 8 graphiques principaux. Je vais vous expliquer chacun avec des exemples concrets.
 
-Le dashboard Optuna offre de nombreuses visualisations pour analyser vos optimisations. Ce guide explique **chaque graphique en détail**, comment les interpréter, et quelles décisions prendre.
+## 1. Optimization History (l'historique)
 
----
+C'est le graphique le plus important. Il montre comment l'optimisation progresse.
 
-## 📈 Les 8 Graphiques Principaux
-
-### **1. Optimization History (Historique d'Optimisation)** 📊
-
-#### **À Quoi Ça Ressemble**
-Un graphique avec :
-- **Axe X** : Numéro de l'essai (Trial Number)
-- **Axe Y** : Valeur de l'objectif (Objective Value)
+### À quoi ça ressemble
+- **Axe X** : Numéro de l'essai (1, 2, 3...)
+- **Axe Y** : Score obtenu
 - **Points** : Chaque essai
-- **Ligne rouge** : Meilleure valeur trouvée jusqu'à présent
+- **Ligne rouge** : Le meilleur score trouvé jusqu'à maintenant
 
-#### **Comment L'Interpréter**
+### Comment l'interpréter
 
-**✅ Bon Signe :**
+**Bon signe :**
 ```
-Valeur │     ●
-       │   ●   ●
-       │ ●       ●
-       │●          ●──●──●  ← Plateau (convergence)
-       └─────────────────────→ Essais
+Score │     ●
+      │   ●   ●
+      │ ●       ●
+      │●          ●──●──●  ← Ça se stabilise (bien !)
+      └─────────────────────→ Essais
 ```
-- La ligne rouge s'améliore rapidement au début
-- Puis se stabilise (plateau) = convergence
-- Les points sont concentrés autour de bonnes valeurs
 
-**❌ Mauvais Signe :**
+Ça veut dire :
+- Au début, Optuna trouve rapidement de meilleures solutions
+- Puis ça se stabilise = il a trouvé l'optimum
+- C'est exactement ce qu'on veut voir
+
+**Mauvais signe :**
 ```
-Valeur │ ●     ●
-       │   ●       ●
-       │     ●   ●     ● ← Pas d'amélioration
-       │ ●     ●     ●
-       └─────────────────────→ Essais
+Score │ ●     ●
+      │   ●       ●
+      │     ●   ●     ● ← Ça n'avance pas
+      │ ●     ●     ●
+      └─────────────────────→ Essais
 ```
-- Pas d'amélioration visible
-- Points dispersés partout
-- Ligne rouge plate dès le début
 
-#### **Décisions à Prendre**
+Ça veut dire :
+- Pas d'amélioration
+- Les points sont partout
+- Il y a un problème
 
-| Observation | Action |
-|-------------|--------|
-| Convergence rapide (< 50 essais) | ✅ Optimisation réussie |
-| Amélioration continue | ⏳ Continuer l'optimisation |
-| Plateau après 100+ essais | ✅ Arrêter, optimum trouvé |
-| Aucune amélioration | ❌ Revoir les plages de paramètres |
-| Valeurs erratiques | ❌ Vérifier la fonction objectif |
+### Que faire selon ce que vous voyez
+
+- **Ça converge vite (< 50 essais)** → Parfait, vous avez vos paramètres !
+- **Ça s'améliore encore** → Laissez tourner plus longtemps
+- **Plateau après 100+ essais** → Arrêtez, c'est bon
+- **Aucune amélioration** → Vérifiez vos plages de paramètres
+- **C'est n'importe quoi** → Bug dans votre fonction objectif
 
 ---
 

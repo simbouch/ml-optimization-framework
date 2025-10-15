@@ -1,100 +1,105 @@
-# Commandes Essentielles
+# Les Commandes dont vous avez besoin
 
-Guide des commandes pour utiliser le projet d'optimisation Optuna.
+Bon, voici toutes les commandes pour faire tourner le projet. C'est du Docker, donc c'est assez simple.
 
-## Démarrage du Projet
+## Pour démarrer
 
-### Lancer le projet
+### Lancer tout le bordel
 
 ```powershell
-# Construire et démarrer les conteneurs Docker
 docker-compose up -d --build
 ```
 
-### Vérifier le statut
+Cette commande :
+- Construit l'image Docker
+- Lance le conteneur
+- Crée les 6 études d'optimisation
+- Démarre le dashboard
+
+**Attendez 2-3 minutes** que tout se lance.
+
+### Vérifier que ça tourne
 
 ```powershell
-# Vérifier que le conteneur est en cours d'exécution
 docker-compose ps
 ```
 
+Vous devriez voir quelque chose comme "healthy" dans le statut.
+
 ### Accéder au dashboard
 
-Ouvrez votre navigateur et allez à :
-```
-http://localhost:8080
-```
+Ouvrez votre navigateur : **http://localhost:8080**
 
-## Gestion du Projet
+## Pour gérer le projet
 
 ### Arrêter le projet
 
 ```powershell
-# Arrêter les conteneurs
 docker-compose down
 ```
 
-### Redémarrer le projet
+### Redémarrer
 
 ```powershell
-# Redémarrer les conteneurs
 docker-compose restart
 ```
 
-### Voir les logs
+### Voir ce qui se passe (logs)
 
 ```powershell
-# Voir les logs du conteneur
+# Voir les logs
 docker-compose logs
 
-# Suivre les logs en temps réel
+# Suivre en temps réel
 docker-compose logs -f
 ```
 
-## Dépannage
+## Si ça marche pas
 
-### Le dashboard ne se charge pas
+### Le dashboard ne s'affiche pas
 
-1. Attendez 2-3 minutes après le démarrage
-2. Vérifiez le statut : `docker-compose ps`
-3. Consultez les logs : `docker-compose logs`
+Pas de panique, c'est normal :
+1. **Attendez 2-3 minutes** après le démarrage (il faut créer les études)
+2. Vérifiez que ça tourne : `docker-compose ps`
+3. Regardez les logs : `docker-compose logs`
 
-### Port 8080 déjà utilisé
+### "Port 8080 déjà utilisé"
+
+Quelqu'un d'autre utilise le port :
 
 ```powershell
-# Arrêter les conteneurs existants
+# Arrêtez tout
 docker-compose down
 
-# Vérifier les processus utilisant le port 8080
+# Voyez qui utilise le port 8080
 netstat -ano | findstr :8080
 ```
 
-### Reconstruire complètement
+### Tout reconstruire (solution de bourrin)
+
+Si vraiment ça marche pas :
 
 ```powershell
-# Arrêter et supprimer les conteneurs
+# Tout arrêter et supprimer
 docker-compose down
 
 # Reconstruire depuis zéro
 docker-compose up -d --build --force-recreate
 ```
 
-## Commandes Avancées
+## Commandes pour les curieux
 
-### Exécuter des commandes dans le conteneur
+### Rentrer dans le conteneur
 
 ```powershell
 # Accéder au shell du conteneur
 docker exec -it ml-optimization-framework sh
-
-# Exécuter une commande Python
-docker exec ml-optimization-framework python create_unified_demo.py
 ```
 
-### Voir les études créées
+### Voir les fichiers créés
 
 ```powershell
-# Lister les fichiers dans le dossier studies
+# Lister les études dans le conteneur
 docker exec ml-optimization-framework ls -la studies/
 ```
 
